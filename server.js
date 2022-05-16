@@ -3,6 +3,15 @@ var bodyParser = require('body-parser');
 const cors = require('cors')
 const port = 3000
 var mysql = require('mysql');
+const fs = require('fs');
+const crypto = require('crypto');
+require('dotenv').config();
+
+if (!fs.existsSync('.env')) {
+  fs.appendFile('.env', `SECRET_TOKEN=${crypto.randomBytes(64).toString('hex')}`, function (err) {
+    if (err) throw err;
+  });
+}
 
 var app = express();
 app.use(cors())
@@ -22,6 +31,12 @@ app.get('/',  function(req, res) {
     res.setHeader("Content-Type", "application/json; charset=utf-8");
     res.send("ok");
 })
+
+app.get('/createSecretToken',  function(req, res) {
+  res.setHeader("Content-Type", "application/json; charset=utf-8");
+  res.send(process.env.SECRET_TOKEN);
+})
+
 
 // app.get('/auteurs',  function(req, res) {
 //   res.setHeader("Content-Type", "application/json; charset=utf-8");
