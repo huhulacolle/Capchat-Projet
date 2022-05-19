@@ -9,43 +9,12 @@ const crypto = require('crypto');
 
 require('dotenv').config();
 
+// crée un fichier .env si il n'existe pas
 if (!fs.existsSync('.env')) {
   fs.appendFile('.env', `SECRET_TOKEN=${crypto.randomBytes(64).toString('hex')}\nSECRET_TOKEN_MDP=${crypto.randomBytes(64).toString('hex')}`, function (err) {
     if (err) throw err;
   });
 }
-
-/* Récupération du header bearer */
-const extractBearerToken = headerValue => {
-  if (typeof headerValue !== 'string') {
-      return false
-  }
-
-  const matches = headerValue.match(/(bearer)\s+(\S+)/i)
-  return matches && matches[2]
-}
-
-/* Vérification du token */
-// eslint-disable-next-line no-unused-vars
-const checkTokenMiddleware = (req, res, next) => {
-  // Récupération du token
-  const token = req.headers.authorization && extractBearerToken(req.headers.authorization)
-
-  // Présence d'un token
-  if (!token) {
-      return res.status(401).json({ message: 'Erreur : token manquant' })
-  }
-
-  // Véracité du token
-  jwt.verify(token, process.env.SECRET_TOKEN, (err, decodedToken) => {
-      if (err) {
-          res.status(401).json({ message: 'Erreur : mauvais token' })
-      } else {
-          return decodedToken
-      }
-  })
-}
-
 
 var app = express();
 app.use(cors())
@@ -102,9 +71,23 @@ app.post('/api/inscription', async function(req, res) {
   );
 })
 
-app.get('/api/compte', checkTokenMiddleware, function(req,res) {
+app.get('/api/compte', authenticateToken, function(req,res) {
   res.send("ça marche").end();
 })
+
+// verifie le token de l'utilisateur
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization']
+  const token = authHeader && authHeader.split(' ')[1]
+  if (token == null) return res.status(401).json({message: 'Erreur : token manquant'})
+
+  jwt.verify(token, process.env.SECRET_TOKEN, (err, user) => {
+    if (err) return res.status(403).json({message: `Erreur : ${err}`})
+    req.user = user
+    next()
+  })
+}
+
 
 function getUsers() {
   return new Promise((resolve, reject) => {
