@@ -26,19 +26,20 @@ const extractBearerToken = headerValue => {
 }
 
 /* Vérification du token */
+// eslint-disable-next-line no-unused-vars
 const checkTokenMiddleware = (req, res, next) => {
   // Récupération du token
   const token = req.headers.authorization && extractBearerToken(req.headers.authorization)
 
   // Présence d'un token
   if (!token) {
-      return res.status(401).json({ message: 'Error. Need a token' })
+      return res.status(401).json({ message: 'Erreur : token manquant' })
   }
 
   // Véracité du token
   jwt.verify(token, process.env.SECRET_TOKEN, (err, decodedToken) => {
       if (err) {
-          res.status(401).json({ message: 'Error. Bad token' })
+          res.status(401).json({ message: 'Erreur : mauvais token' })
       } else {
           return decodedToken
       }
@@ -72,7 +73,7 @@ app.post('/api/connexion', async function(req, res) {
   res.setHeader("Content-Type", "application/json; charset=utf-8");
 
   const users = await getUsers();
-  const user = users.find(u => u.nom == req.body.username && u.mdp == hash(req.body.password));
+  const user = users.find(u => u.nom == req.body.username && u.mdp == hash(req.body.password.toString()));
   if (!user) {
     return res.status(400).json({message: `le nom d'utilisateur ou le mot de passe sont incorrect`})
   }
@@ -102,7 +103,7 @@ app.post('/api/inscription', async function(req, res) {
 })
 
 app.get('/api/compte', checkTokenMiddleware, function(req,res) {
-  res.send("ça marche")
+  res.send("ça marche").end();
 })
 
 function getUsers() {
@@ -116,9 +117,7 @@ function getUsers() {
 
 function setUser(nom, mdp) {
   return new Promise((resolve, reject) => {
-    const mdpHash = hash(mdp)
-    
-    sql.query(`INSERT INTO user(nom, mdp) VALUES ('${nom}','${mdpHash}')`, function (err) {
+    sql.query(`INSERT INTO user(nom, mdp) VALUES ('${nom}','${hash(mdp.toString())}')`, function (err) {
       if (err) return reject(err);
       return resolve();
     })

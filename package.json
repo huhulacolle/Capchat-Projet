@@ -5,7 +5,9 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "api": "node server.js",
+    "apiDev": "nodemon server.js"
   },
   "dependencies": {
     "@popperjs/core": "^2.11.5",
@@ -31,6 +33,7 @@
     "@vue/cli-service": "~5.0.0",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.0.3",
+    "nodemon": "^2.0.16",
     "sass": "^1.32.7",
     "sass-loader": "^12.0.0"
   }
