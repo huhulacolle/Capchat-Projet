@@ -7,7 +7,7 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "api": "node server.js",
-    "apiDev": "nodemon server.js"
+    "api:dev": "nodemon server.js"
   },
   "dependencies": {
     "@popperjs/core": "^2.11.5",
