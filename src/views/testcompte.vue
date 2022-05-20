@@ -1,6 +1,6 @@
 <template>
     <div>
-        <NavBarUser />
+        <NavBarUser :nom=nom />
         <div style="text-align: center">Salut, ton nom est {{nom}}</div>
     </div>
 </template>

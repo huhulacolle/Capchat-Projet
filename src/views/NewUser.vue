@@ -1,6 +1,7 @@
 <template>
     <div>
         <NavBarConnexion />
+        Bienvenue dans capchat
     </div>
 </template>
 <script>

@@ -4,10 +4,9 @@
             <div class="container-fluid">
                 <a class="navbar-brand">GESTION DE CAPTCHAS</a>
                 <div class="align-self-end" id="navbarNavAltMarkup">
-                    <!-- ml-auto still works just fine-->
                     <div class="navbar-nav ml-auto">
-                        <a class="nav-link" data-bs-toggle="modal" data-bs-target="#connexion">Connexion</a>
-                        <a class="nav-link" data-bs-toggle="modal" data-bs-target="#inscription">Inscription</a>
+                        <a class="nav-link" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#connexion">Connexion</a>
+                        <a class="nav-link" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#inscription">Inscription</a>
                     </div>
                 </div>
             </div>
@@ -53,7 +52,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title">Connexion</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button type="button" class="btn-close" ref="Close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <div class="mb-3">
@@ -81,7 +80,6 @@
 </template>
 
 <script>
-// eslint-disable-next-line no-unused-vars
 import axios from 'axios';
 
 export default {
@@ -105,7 +103,8 @@ export default {
             })
             .then(
                 data => {
-                    this.errorBool = false;   
+                    this.$refs.Close.click();
+                    this.errorBool = false;
                     localStorage.setItem('token', data.data.token)
                     this.$router.push('/test')
                 }
@@ -120,9 +119,3 @@ export default {
     }
 }
 </script>
-
-<style scoped>
-a {
-    cursor: pointer;
-}
-</style>

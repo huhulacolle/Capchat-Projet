@@ -98,7 +98,7 @@ function extractBearerToken(headerValue) {
 
 const matches = headerValue.match(/(bearer)\s+(\S+)/i)
 return matches && matches[2]
-};
+}
 
 function getUsers() {
   return new Promise((resolve, reject) => {
