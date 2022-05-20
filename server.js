@@ -31,16 +31,18 @@ var sql = mysql.createConnection({
 sql.connect();
 
 app.get('/',  function(req, res) {
-    res.setHeader("Content-Type", "application/json; charset=utf-8");
+
     const hash = crypto.createHmac('sha512', process.env.SECRET_TOKEN_MDP)
     hash.update("test");
     const test = hash.digest('hex').toString()
     res.send(test);
 })
 
-app.post('/api/connexion', async function(req, res) {
-  res.setHeader("Content-Type", "application/json; charset=utf-8");
+app.get('/api/test', function (req, res) {
+  res.json({test: "test"});
+})
 
+app.post('/api/connexion', async function(req, res) {
   const users = await getUsers();
   const user = users.find(u => u.nom == req.body.username && u.mdp == hash(req.body.password.toString()));
   if (!user) {
@@ -51,7 +53,6 @@ app.post('/api/connexion', async function(req, res) {
 })
 
 app.post('/api/inscription', async function(req, res) {
-  res.setHeader("Content-Type", "application/json; charset=utf-8");
   const users = await getUsers();
   const user = users.find(u => u.nom == req.body.username);
   if (user) {
@@ -71,8 +72,10 @@ app.post('/api/inscription', async function(req, res) {
   );
 })
 
-app.get('/api/compte', authenticateToken, function(req,res) {
-  res.send("ça marche").end();
+app.get('/api/compte', authenticateToken, function(req, res) {
+  const token = req.headers.authorization && extractBearerToken(req.headers.authorization)
+  const decoded = jwt.decode(token, { complete: false })
+  res.json({content: decoded})
 })
 
 // verifie le token de l'utilisateur
@@ -88,6 +91,14 @@ function authenticateToken(req, res, next) {
   })
 }
 
+function extractBearerToken(headerValue) {
+  if (typeof headerValue !== 'string') {
+    return false
+}
+
+const matches = headerValue.match(/(bearer)\s+(\S+)/i)
+return matches && matches[2]
+};
 
 function getUsers() {
   return new Promise((resolve, reject) => {

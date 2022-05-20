@@ -49,7 +49,7 @@
         <!-- Connexion -->
         <div class="modal fade" id="connexion" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog">
-                <form>
+                <form @submit.prevent="connexion()">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title">Connexion</h5>
@@ -66,9 +66,12 @@
                                 <label class="form-label">Mot de passe</label>
                                 <input type="password" v-model="mdpConnexion" class="form-control" required>
                             </div>
+                            <div class="alert alert-danger" role="alert" v-if="errorBool">
+                                {{errorMsg}}
+                            </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-primary">Connexion</button>
+                            <button type="submit" class="btn btn-primary">Connexion</button>
                         </div>
                     </div>
                 </form>
@@ -78,15 +81,41 @@
 </template>
 
 <script>
+// eslint-disable-next-line no-unused-vars
+import axios from 'axios';
+
 export default {
     data() {
         return {
+            errorBool: false,
+            errorMsg: null,
             surnomInscription: null,
             mdpInscription: null,
             mdpConfirmeInscription: null,
             surnomConnexion: null,
             mdpConnexion: null,
             mdpConfirmeConnexion: null
+        }
+    },
+    methods: {
+        connexion() {
+            axios.post('connexion', {
+                username: this.surnomConnexion,
+                password: this.mdpConnexion
+            })
+            .then(
+                data => {
+                    this.errorBool = false;   
+                    localStorage.setItem('token', data.data.token)
+                    this.$router.push('/test')
+                }
+            )
+            .catch(
+                err => {
+                    this.errorMsg = err.response.data.message;
+                    this.errorBool = true;
+                }
+            )
         }
     }
 }
