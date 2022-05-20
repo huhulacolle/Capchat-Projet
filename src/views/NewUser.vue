@@ -10,6 +10,11 @@ import NavBarConnexion from '@/components/NavBarConnexion.vue'
 export default {
     components: {
         NavBarConnexion
+    },
+    created() {
+        if (localStorage.getItem('token')) {
+            this.$router.push('/MonCompte')
+        }
     }
 }
 </script>

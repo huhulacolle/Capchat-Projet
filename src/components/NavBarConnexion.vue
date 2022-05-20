@@ -106,7 +106,7 @@ export default {
                     this.$refs.Close.click();
                     this.errorBool = false;
                     localStorage.setItem('token', data.data.token)
-                    this.$router.push('/test')
+                    this.$router.push('/MonCompte')
                 }
             )
             .catch(

@@ -1,3 +1,4 @@
+var os = require('os');
 var express = require('express');
 const jwt = require('jsonwebtoken')
 var bodyParser = require('body-parser');
@@ -124,59 +125,6 @@ function hash(mdp) {
   return hash.digest('hex').toString();
 }
 
-// app.get('/auteurs',  function(req, res) {
-//   res.setHeader("Content-Type", "application/json; charset=utf-8");
-
-//   sql.query('SELECT * from auteurs', function(err, rows) {
-//     if (err) {
-//       res.status(400).end(JSON.stringify(err));
-//     }
-//     res.send(rows).end();
-//   });
-
-// })
-
-// app.get('/auteurs/:userId',  function(req, res) {
-//   res.setHeader("Content-Type", "application/json; charset=utf-8");
-
-//   sql.query(`SELECT * from auteurs WHERE ID = ${req.params.userId}`, function(err, rows) {
-//     if (err) {
-//       res.status(400).end(JSON.stringify(err));
-//     }
-//     res.send(rows);
-//   });
-
-// })
-
-// app.post('/auteurs', function(req, res) {
-//   res.setHeader("Content-Type", "application/json; charset=utf-8");
-//   sql.query(`INSERT INTO auteurs (Nom, Prenom) VALUES ('${req.body.Nom}','${req.body.Prenom}')`, function(err) {
-//     if (err) {
-//       res.status(400).end(JSON.stringify(err));
-//     }
-//     res.status(201).end();
-//   })
-// })
-
-// app.put('/auteurs', function(req, res) {
-//   res.setHeader("Content-Type", "application/json; charset=utf-8");
-//   sql.query(`UPDATE auteurs SET Nom = '${req.body.Nom}' , Prenom = '${req.body.Prenom}' WHERE Id_Auteurs = '${req.body.id}'`, function(err) {
-//     if (err) {
-//       res.status(400).end(JSON.stringify(err));
-//     }
-//     res.status(200).end();
-//   })
-// })
-
-// app.delete('/auteurs', function(req, res) {
-//   sql.query(`DELETE FROM auteurs WHERE Id_Auteurs = '${req.body.id}'`, function(err) {
-//     if (err) {
-//       res.status(400).end(JSON.stringify(err));
-//     }
-//     res.status(200).end();
-//   })
-// })
-
 app.listen(port, () => {
-  console.log(`http://localhost:${port}`)
+  console.log(`-Local: http://localhost:${port}/\n-Network: http://${os.networkInterfaces()['VMware Network Adapter VMnet8'][1].address}:${port}/`);  
 })
