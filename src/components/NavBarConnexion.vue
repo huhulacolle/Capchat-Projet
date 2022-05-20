@@ -15,7 +15,7 @@
         <!-- Inscription -->
         <div class="modal fade" id="inscription" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog">
-                <form>
+                <form @submit.prevent="inscription()">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title">Inscription</h5>
@@ -24,21 +24,34 @@
                         <div class="modal-body">
                             <div class="mb-3">
                                 <label class="form-label">Surnom</label>
-                                <input type="text" v-model="surnomInscription" class="form-control" required>
+                                <input type="text" v-model="surnomInscription" class="form-control" required
+                                    :disabled="inscriptionBool">
                                 <div class="form-text">
                                 </div>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Mot de passe</label>
-                                <input type="password" v-model="mdpInscription" class="form-control" required>
+                                <input type="password" v-model="mdpInscription" class="form-control" required
+                                    :disabled="inscriptionBool">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Confirmer le mot de passe</label>
-                                <input type="password" v-model="mdpConfirmeInscription" class="form-control" required>
+                                <input type="password" v-model="mdpConfirmeInscription" class="form-control" required
+                                    :disabled="inscriptionBool">
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-primary">Inscription</button>
+                        <div class="alert alert-danger" role="alert" v-if="errorBoolInscription">
+                            {{errorMsg}}
+                        </div>
+                        <div class="modal-footer" v-if="!inscriptionBool">
+                            <button type="submit" class="btn btn-primary">Inscription</button>
+                            <br>
+                        </div>
+                        <div style="text-align: center;" v-else>
+                            {{inscriptionMsg}}
+                            <br>
+                            <a style="cursor: pointer;" class="link-secondary" data-bs-dismiss="modal" aria-label="Close" @click="toAccount()">Cliquer ici pour accedez à votre compte</a>
+                            <br><br><br>
                         </div>
                     </div>
                 </form>
@@ -65,12 +78,12 @@
                                 <label class="form-label">Mot de passe</label>
                                 <input type="password" v-model="mdpConnexion" class="form-control" required>
                             </div>
-                            <div class="alert alert-danger" role="alert" v-if="errorBool">
+                            <div class="alert alert-danger" role="alert" v-if="errorBoolConnexion">
                                 {{errorMsg}}
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Connexion</button>
+                            <button type="submit" data-bs-dismiss="modal" aria-label="Close" class="btn btn-primary">Connexion</button>
                         </div>
                     </div>
                 </form>
@@ -85,7 +98,10 @@ import axios from 'axios';
 export default {
     data() {
         return {
-            errorBool: false,
+            inscriptionBool: false,
+            inscriptionMsg: null,
+            errorBoolConnexion: false,
+            errorBoolInscription: false,
             errorMsg: null,
             surnomInscription: null,
             mdpInscription: null,
@@ -103,8 +119,7 @@ export default {
             })
             .then(
                 data => {
-                    this.$refs.Close.click();
-                    this.errorBool = false;
+                    this.errorBoolConnexion = false;
                     localStorage.setItem('token', data.data.token)
                     this.$router.push('/MonCompte')
                 }
@@ -112,9 +127,40 @@ export default {
             .catch(
                 err => {
                     this.errorMsg = err.response.data.message;
-                    this.errorBool = true;
+                    this.errorBoolConnexion = true;
                 }
             )
+        },
+        inscription() {
+            if (this.mdpInscription == this.mdpConfirmeInscription) {
+                this.errorBoolInscription = false;
+                axios.post('inscription', {
+                    username: this.surnomInscription,
+                    password: this.mdpInscription
+                })
+                .then(
+                    data => {
+                        this.inscriptionMsg = data.data.message
+                        this.inscriptionBool = true;
+                        this.errorBoolInscription = false;
+                        localStorage.setItem('token', data.data.token)
+                    }
+                )
+                .catch(
+                    err => {
+                        this.errorMsg = err.response.data.message;
+                        this.errorBoolInscription = true;
+                    }
+                )
+
+            }
+            else {
+                this.errorMsg = "dégage la"
+                this.errorBoolInscription = true;
+            }
+        },
+        toAccount() {
+            this.$router.push('/MonCompte');
         }
     }
 }
