@@ -2,11 +2,11 @@
     <div>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container-fluid">
-                <a class="navbar-brand">GESTION DE CAPTCHAS</a>
+                <a class="navbar-brand disable-select">GESTION DE CAPTCHAS</a>
                 <div class="align-self-end" id="navbarNavAltMarkup">
                     <div class="navbar-nav ml-auto">
-                        <a class="nav-link" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#connexion">Connexion</a>
-                        <a class="nav-link" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#inscription">Inscription</a>
+                        <a class="nav-link" data-bs-toggle="modal" data-bs-target="#connexion">Connexion</a>
+                        <a class="nav-link" data-bs-toggle="modal" data-bs-target="#inscription">Inscription</a>
                     </div>
                 </div>
             </div>
