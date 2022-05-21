@@ -1,4 +1,3 @@
-var os = require('os');
 var express = require('express');
 const jwt = require('jsonwebtoken')
 var bodyParser = require('body-parser');
@@ -7,7 +6,6 @@ const port = 3000
 var mysql = require('mysql');
 const fs = require('fs');
 const crypto = require('crypto');
-
 require('dotenv').config();
 
 // crée un fichier .env si il n'existe pas
@@ -31,17 +29,7 @@ var sql = mysql.createConnection({
 
 sql.connect();
 
-app.get('/',  function(req, res) {
-
-    const hash = crypto.createHmac('sha512', process.env.SECRET_TOKEN_MDP)
-    hash.update("test");
-    const test = hash.digest('hex').toString()
-    res.send(test);
-})
-
-app.get('/api/test', function (req, res) {
-  res.json({test: "test"});
-})
+// route 
 
 app.post('/api/connexion', async function(req, res) {
   const users = await getUsers();
@@ -93,6 +81,8 @@ function authenticateToken(req, res, next) {
   })
 }
 
+// function 
+
 function extractBearerToken(headerValue) {
   if (typeof headerValue !== 'string') {
     return false
@@ -127,5 +117,10 @@ function hash(mdp) {
 }
 
 app.listen(port, () => {
-  console.log(`-Local: http://localhost:${port}/\n-Network: http://${os.networkInterfaces()['VMware Network Adapter VMnet8'][1].address}:${port}/`);  
+  var address,
+    ifaces = require('os').networkInterfaces();
+  for (var dev in ifaces) {
+    ifaces[dev].filter((details) => details.family === 'IPv4' && details.internal === false ? address = details.address : undefined);
+  }
+  console.log(`-Local: http://localhost:${port}/\n-Network: http://${address}:${port}/`);
 })

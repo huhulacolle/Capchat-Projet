@@ -82,12 +82,12 @@ export default {
             let menu = this.menus.find(m => m == this.menuSelect)
             menu = this.menus.indexOf(menu);
             if (menu > oldMenuSelectIndex) {
-                this.enter = "animate__animated animate__fadeInLeft"
-                this.leave = "animate__animated animate__fadeOutRight"
-            }
-            else {
                 this.enter = "animate__animated animate__fadeInRight"
                 this.leave = "animate__animated animate__fadeOutLeft"
+            }
+            else {
+                this.enter = "animate__animated animate__fadeInLeft"
+                this.leave = "animate__animated animate__fadeOutRight"
             }
         }
     }
