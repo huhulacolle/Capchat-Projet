@@ -70,6 +70,7 @@ export default {
             .catch(
                 error => {
                     console.log(error);
+                    localStorage.clear();
                     this.$router.push('/')
                 }
             )

@@ -43,14 +43,8 @@ app.post('/api/connexion', async function (req, res) {
             message: `le nom d'utilisateur ou le mot de passe sont incorrect`
         })
     }
-    const token = jwt.sign({
-        username: req.body.username
-    }, process.env.SECRET_TOKEN, {
-        expiresIn: '24h'
-    });
-    return res.send({
-        token: token
-    })
+    const token = jwt.sign({ username: req.body.username }, process.env.SECRET_TOKEN, { expiresIn: '12h' });
+    return res.send({ token: token })
 })
 
 app.post('/api/inscription', async function (req, res) {
@@ -99,9 +93,7 @@ app.post('/api/testsendimg', authenticateToken, async function (req, res) {
     await setImg(req.files.img.data.toString('base64'), req.files.img.mimetype)
         .then(
             () => {
-                res.json({
-                    message: "dessin envoyé"
-                })
+                res.status(200).end();
             }
         )
         .catch(
