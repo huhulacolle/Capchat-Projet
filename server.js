@@ -116,7 +116,7 @@ function setImg(img, format) {
 
 function getImg() {
     return new Promise((resolve, reject) => {
-        sql.query('SELECT * FROM testimg', function(err, rows) {
+        sql.query('SELECT * FROM testimg ORDER BY id DESC', function(err, rows) {
             if (err) return reject(err);
             return resolve(rows)
         })

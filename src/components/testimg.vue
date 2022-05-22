@@ -1,6 +1,11 @@
 <template>
     <div>
         <div class="container">
+            <form @submit.prevent="upload()">
+                <input type="file" id="file">
+                <input type="submit" class="btn btn-primary">
+            </form>
+            <br>
             <table class="table">
                 <thead>
                     <tr>
@@ -40,11 +45,30 @@ export default {
         this.getImg();
     },
     methods: {
+        upload() {
+            var formData = new FormData();
+            const test = document.getElementById('file')
+            formData.append("img", test.files[0]);
+            axios.post('testsendimg', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+            .then(
+                () => {
+                    this.getImg();
+                }
+            )
+            .catch(
+                err => {
+                    console.error(err);
+                }
+            )
+        },
         getImg() {
             axios.get('testgetimg')
             .then(
                 data => {
-                    console.log(data.data);
                     this.imgs = data.data;
                 }
             )

@@ -18,7 +18,7 @@
                 <div v-else-if="menuSelect == 'T\'es dessins'">
                     <Dessin />
                 </div>
-                <div v-else-if="menuSelect == 'testimg'">
+                <div v-else-if="menuSelect == 'test image'">
                     <testimg />
                 </div>
             </transition>
@@ -42,7 +42,7 @@ export default {
             menus: [
                 "ton Capchat",
                 "T'es dessins",
-                "testimg"
+                "test image"
             ],
             menuSelect: null
         }
