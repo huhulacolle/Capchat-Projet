@@ -90,6 +90,9 @@ app.get('/api/compte', authenticateToken, function (req, res) {
 })
 
 app.post('/api/testsendimg', authenticateToken, async function (req, res) {
+    if (!req.files) {
+        return res.status(400).end();
+    }
     await setImg(req.files.img.data.toString('base64'), req.files.img.mimetype)
         .then(
             () => {
