@@ -2,6 +2,7 @@ var express = require('express');
 const jwt = require('jsonwebtoken')
 var bodyParser = require('body-parser');
 const cors = require('cors')
+const fileUpload = require('express-fileupload')
 const port = 3000
 var mysql = require('mysql');
 const fs = require('fs');
@@ -19,6 +20,7 @@ var app = express();
 app.use(cors())
 app.use(bodyParser.json()); 
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(fileUpload());
 
 var sql = mysql.createConnection({
   host: "127.0.0.1",
@@ -67,6 +69,52 @@ app.get('/api/compte', authenticateToken, function(req, res) {
   const decoded = jwt.decode(token, { complete: false })
   res.json({content: decoded})
 })
+
+app.post('/api/testsendimg', authenticateToken, async function(req, res) {
+    await setImg(req.files.img.data.toString('base64'))
+    .then(
+        () => {
+            res.json({message: "dessin envoyé"})
+        }
+    )
+    .catch(
+        err => {
+            res.status(400).json({message: `erreur : ${err}`})
+        }
+    )
+})
+
+app.get('/api/testgetimg', authenticateToken, async function(req, res) {
+    await getImg()
+    .then(
+        data => {
+            res.json(data);
+        }
+    )
+    .catch(
+        err => {
+            res.status(400).json(err);
+        }
+    )
+})
+
+function setImg(img) {
+    return new Promise((resolve, reject) => {
+        sql.query(`INSERT INTO testimg (img) VALUES ('${img}')`, function(err) {
+            if (err) return reject(err);
+            return resolve();
+        })
+    })
+}
+
+function getImg() {
+    return new Promise((resolve, reject) => {
+        sql.query('SELECT * FROM testimg', function(err, rows) {
+            if (err) return reject(err);
+            return resolve(rows)
+        })
+    })
+}
 
 // verifie le token de l'utilisateur
 function authenticateToken(req, res, next) {

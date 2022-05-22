@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import NewUser from '@/views/NewUser.vue'
+import NewUser from '@/views/Index.vue'
 import testcompte from '@/views/testcompte.vue'
 import Compte from '@/views/Compte.vue'
 

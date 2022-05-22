@@ -18,6 +18,9 @@
                 <div v-else-if="menuSelect == 'T\'es dessins'">
                     <Dessin />
                 </div>
+                <div v-else-if="menuSelect == 'testimg'">
+                    <testimg />
+                </div>
             </transition>
         </div>
     </div>
@@ -28,6 +31,7 @@ import NavBarUser from '@/components/NavBarUser.vue'
 import Capchat from '@/components/Capchat.vue'
 import Dessin from '@/components/Dessin.vue'
 import axios from 'axios'
+import testimg from '@/components/testimg.vue'
 
 export default {
     data() {
@@ -38,6 +42,7 @@ export default {
             menus: [
                 "ton Capchat",
                 "T'es dessins",
+                "testimg"
             ],
             menuSelect: null
         }
@@ -50,15 +55,13 @@ export default {
     components: {
         NavBarUser,
         Capchat,
-        Dessin
+        Dessin,
+        testimg
     },
     methods: {
         user() {
-            axios.get('compte', {
-                headers: {
-                    Authorization: 'Bearer ' + localStorage.getItem('token')
-                }
-            })
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
+            axios.get('compte')
             .then(
                 data => {
                     this.nom = data.data.content.username
