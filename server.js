@@ -71,7 +71,7 @@ app.get('/api/compte', authenticateToken, function(req, res) {
 })
 
 app.post('/api/testsendimg', authenticateToken, async function(req, res) {
-    await setImg(req.files.img.data.toString('base64'))
+    await setImg(req.files.img.data.toString('base64'), req.files.img.mimetype)
     .then(
         () => {
             res.json({message: "dessin envoyé"})
@@ -88,7 +88,8 @@ app.get('/api/testgetimg', authenticateToken, async function(req, res) {
     await getImg()
     .then(
         data => {
-            res.json(data);
+            const reponse = convertBuffObjectToString(data);
+            res.json(reponse);
         }
     )
     .catch(
@@ -98,9 +99,15 @@ app.get('/api/testgetimg', authenticateToken, async function(req, res) {
     )
 })
 
-function setImg(img) {
+function convertBuffObjectToString(data) {
+    for (let i = 0; i < data.length; i++) {
+        data[i].img = data[i].img.toString();
+    }
+    return data
+}
+function setImg(img, format) {
     return new Promise((resolve, reject) => {
-        sql.query(`INSERT INTO testimg (img) VALUES ('${img}')`, function(err) {
+        sql.query(`INSERT INTO testimg (img, format) VALUES ('${img}', '${format}')`, function(err) {
             if (err) return reject(err);
             return resolve();
         })

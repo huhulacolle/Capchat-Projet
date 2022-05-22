@@ -6,6 +6,7 @@
                     <tr>
                         <th scope="col">id</th>
                         <th scope="col">img</th>
+                        <th scope="col">format</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -14,8 +15,10 @@
                             {{img.id}}
                         </td>
                         <td>
-                            <img :src="'data:image/jpg;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=='"
-                                alt="Red dot" />
+                            <img :src="'data:' + img.format + ';base64, ' + img.img" />
+                        </td>
+                        <td>
+                            {{img.format}}
                         </td>
                     </tr>
                 </tbody>
@@ -41,6 +44,7 @@ export default {
             axios.get('testgetimg')
             .then(
                 data => {
+                    console.log(data.data);
                     this.imgs = data.data;
                 }
             )
