@@ -175,7 +175,7 @@ function extractBearerToken(headerValue) {
 
 function getUsers() {
     return new Promise((resolve, reject) => {
-        sql.query('SELECT nom, mdp FROM user', function (err, rows) {
+        sql.query('SELECT nom, mdp FROM artiste', function (err, rows) {
             if (err) return reject(err)
             return resolve(rows);
         })
@@ -184,7 +184,7 @@ function getUsers() {
 
 function setUser(nom, mdp) {
     return new Promise((resolve, reject) => {
-        sql.query(`INSERT INTO user(nom, mdp) VALUES ('${nom}','${hash(mdp.toString())}')`, function (err) {
+        sql.query(`INSERT INTO artiste(nom, mdp) VALUES ('${nom}','${hash(mdp.toString())}')`, function (err) {
             if (err) return reject(err);
             return resolve();
         })
