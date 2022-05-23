@@ -16,7 +16,7 @@
                     <Capchat />
                 </div>
                 <div v-else-if="menuSelect == 'T\'es dessins'">
-                    <Dessin />
+                    <Dessin :id=id />
                 </div>
                 <div v-else-if="menuSelect == 'test image'">
                     <testimg />
@@ -38,6 +38,7 @@ export default {
         return {
             enter: null,
             leave: null,
+            id: null,
             nom: null,
             menus: [
                 "ton Capchat",
@@ -64,6 +65,7 @@ export default {
             axios.get('compte')
             .then(
                 data => {
+                    this.id = data.data.content.id;
                     this.nom = data.data.content.username
                 }
             )

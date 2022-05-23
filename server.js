@@ -40,7 +40,7 @@ app.post('/api/connexion', async function (req, res) {
             message: `le nom d'utilisateur ou le mot de passe sont incorrect`
         })
     }
-    const token = jwt.sign({ username: req.body.username }, process.env.SECRET_TOKEN, { expiresIn: '12h' });
+    const token = jwt.sign({id: user.id, username: req.body.username }, process.env.SECRET_TOKEN, { expiresIn: '12h' });
     return res.send({ token: token })
 })
 
@@ -86,6 +86,20 @@ app.get('/api/compte', authenticateToken, function (req, res) {
     })
 })
 
+app.get('/api/themes', authenticateToken, async function (req, res) {
+    await getThemes()
+    .then(
+        data => {
+            res.json(data);
+        }
+    )
+    .catch(
+        err => {
+            res.status(400).json(err);
+        }
+    )
+})
+
 app.post('/api/testsendimg', authenticateToken, async function (req, res) {
     if (!req.files) {
         return res.status(400).end();
@@ -127,9 +141,18 @@ function convertBuffObjectToString(data) {
     return data
 }
 
+function getThemes() {
+    return new Promise((resolve, reject) => {
+        sql.query('SELECT * FROM theme', function(err, rows) {
+            if (err) reject(err);
+            return resolve(rows);
+        })
+    })
+}
+
 function setImg(img, format) {
     return new Promise((resolve, reject) => {
-        sql.query(`INSERT INTO testimg (img, format) VALUES ('${img}', '${format}')`, function (err) {
+        sql.query(`INSERT INTO testimg (img, format) VALUES ('${img}', '${format}')`, function (err,) {
             if (err) return reject(err);
             return resolve();
         })
@@ -175,7 +198,7 @@ function extractBearerToken(headerValue) {
 
 function getUsers() {
     return new Promise((resolve, reject) => {
-        sql.query('SELECT nom, mdp FROM artiste', function (err, rows) {
+        sql.query('SELECT id, nom, mdp FROM artiste', function (err, rows) {
             if (err) return reject(err)
             return resolve(rows);
         })
