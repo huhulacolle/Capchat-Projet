@@ -1,6 +1,5 @@
 var express = require('express');
 const jwt = require('jsonwebtoken')
-var bodyParser = require('body-parser');
 const cors = require('cors')
 const fileUpload = require('express-fileupload')
 const port = 3000
@@ -17,11 +16,9 @@ if (!fs.existsSync('.env')) {
 }
 
 var app = express();
-app.use(cors())
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-    extended: true
-}));
+app.use(cors());
+// Express intègre le body-parser depuis la version 4.16, pour l'utiliser il suffit d'appelé la méthode express.json()
+app.use(express.json())
 app.use(fileUpload());
 
 var sql = mysql.createConnection({
