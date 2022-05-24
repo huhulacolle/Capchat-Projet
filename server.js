@@ -62,7 +62,7 @@ app.post('/api/inscription', async function (req, res) {
                     expiresIn: '24h'
                 });
                 res.send({
-                    message: `Le compte ${req.body.username} à était créé avec succès`,
+                    message: `Le compte ${req.body.username} à été créé avec succès`,
                     token: token
                 });
             }
@@ -84,6 +84,50 @@ app.get('/api/compte', authenticateToken, function (req, res) {
     res.json({
         content: decoded
     })
+})
+
+app.get('/api/getJeu', authenticateToken, async function (req, res) {
+    const decoded = getIdUser(req);
+    await getJeu(decoded.id)
+    .then(
+        data => {
+            res.json(data)
+        }
+    )
+    .catch(
+        err => {
+            res.status(400).json(err)
+        }
+    )
+})
+
+app.post('/api/sendJeu', authenticateToken, async function (req, res) {
+    const decoded = getIdUser(req)
+    await setJeu(req.body.nom, decoded.id, req.body.theme)
+    .then(
+        () => {
+            res.status(200).end();
+        }
+    )
+    .catch(
+        err => {
+            res.status(400).json(err);
+        }
+    )
+})
+
+app.delete('/api/deleteJeu/:id', authenticateToken, async function (req, res) {
+    await deleteJeu(req.params.id)
+    .then(
+        () => {
+            res.status(200).end();
+        }
+    )
+    .catch(
+        err => {
+            res.status(400).json(err)
+        }
+    )
 })
 
 app.get('/api/themes', authenticateToken, async function (req, res) {
@@ -134,11 +178,58 @@ app.get('/api/testgetimg', authenticateToken, async function (req, res) {
         )
 })
 
+function getIdUser(req) {
+    const token = req.headers.authorization && extractBearerToken(req.headers.authorization)
+    const decoded = jwt.decode(token, {
+        complete: false
+    })
+    return decoded
+}
+
 function convertBuffObjectToString(data) {
     for (let i = 0; i < data.length; i++) {
         data[i].img = data[i].img.toString();
     }
     return data
+}
+
+function getJeu(id) {
+    return new Promise((resolve, reject) => {
+        sql.query(
+            `SELECT jeu.id AS id, jeu.nom AS jeu, theme.nom AS theme
+            FROM jeu 
+            INNER JOIN theme ON jeu.IdTheme = theme.id 
+            WHERE jeu.IdArtiste = ${id} 
+            ORDER BY jeu.id DESC`
+        , function(err, rows) {
+            if (err) return reject(err);
+            return resolve(rows);
+        })
+    })
+}
+
+function setJeu(nom, artiste, theme) {
+    return new Promise((resolve, reject) => {
+        const token = crypto.randomBytes(8).toString('hex');
+        sql.query(`INSERT INTO jeu (nom, token, idArtiste, idTheme) VALUES ('${nom}', '${token}', ${artiste}, ${theme})`, function(err) {
+            if (err) return reject(err);
+            return resolve();
+        })
+    })
+}
+
+function deleteJeu(id) {
+    return new Promise((resolve, reject) => {
+        sql.query(`
+            DELETE jeu, image 
+            FROM jeu
+            LEFT JOIN image ON jeu.id = image.IdJeu 
+            WHERE jeu.id = ${id}
+        `, function (err) {
+            if (err) return reject(err);
+            return resolve();
+        })
+    })
 }
 
 function getThemes() {
@@ -215,9 +306,7 @@ function setUser(nom, mdp) {
 }
 
 function hash(mdp) {
-    const hash = crypto.createHmac('sha512', process.env.SECRET_TOKEN_MDP)
-    hash.update(mdp);
-    return hash.digest('hex').toString();
+    return crypto.createHmac('sha512', process.env.SECRET_TOKEN_MDP).update(mdp).digest('hex').toString();
 }
 
 app.listen(port, () => {

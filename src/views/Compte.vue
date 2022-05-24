@@ -15,8 +15,8 @@
                 <div v-if="menuSelect == 'ton Capchat'">
                     <Capchat />
                 </div>
-                <div v-else-if="menuSelect == 'T\'es dessins'">
-                    <Dessin :id=id />
+                <div v-else-if="menuSelect == 'Tes jeux'">
+                    <Dessin/>
                 </div>
                 <div v-else-if="menuSelect == 'test image'">
                     <testimg />
@@ -42,7 +42,7 @@ export default {
             nom: null,
             menus: [
                 "ton Capchat",
-                "T'es dessins",
+                "Tes jeux",
                 "test image"
             ],
             menuSelect: null
@@ -98,4 +98,5 @@ export default {
         }
     }
 }
+
 </script>
