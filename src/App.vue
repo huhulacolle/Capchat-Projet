@@ -17,7 +17,7 @@
   /* Internet Explorer/Edge */
 }
 
-.disable-select {
+body {
   user-select: none;
   /* supported by Chrome and Opera */
   -webkit-user-select: none;

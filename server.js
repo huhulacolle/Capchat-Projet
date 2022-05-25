@@ -144,6 +144,28 @@ app.get('/api/themes', authenticateToken, async function (req, res) {
     )
 })
 
+// app.get('/api/getDessin/:idJeu', authenticateToken, async function (req, res) {
+
+// })
+
+app.post('/api/setDessin', authenticateToken, async function (req, res) {
+    if (!req.files) {
+        return res.status(400).end();
+    }
+    const img = req.files.img.data.toString('base64')
+    await setDessin(img, req.files.img.mimetype, req.body.TexteQuestion, req.body.ImageSinguliere, req.body.ImageSinguliere, req.body.idJeu)
+    .then(
+        () => {
+            res.status(200).end();
+        }
+    )
+    .catch(
+        err => {
+            res.status(400).json(err);
+        }
+    )
+})
+
 app.post('/api/testsendimg', authenticateToken, async function (req, res) {
     if (!req.files) {
         return res.status(400).end();
@@ -237,6 +259,24 @@ function getThemes() {
         sql.query('SELECT * FROM theme', function(err, rows) {
             if (err) reject(err);
             return resolve(rows);
+        })
+    })
+}
+
+// function getDessin() {
+//     return new Promise((resolve, reject) => {
+//         sql.query
+//     })
+// }
+
+function setDessin(img, format, TexteQuestion, ImageSinguliere, idJeu) {
+    return new Promise((resolve, reject) => {
+        sql.query(`
+            INSERT INTO image (img, format, TexteQuestion, ImageSinguliere, IdJeu) 
+            VALUES ('${img}', '${format}', ${TexteQuestion}, ${ImageSinguliere}, ${idJeu})
+            `, function (err,) {
+            if (err) return reject(err);
+            return resolve();
         })
     })
 }

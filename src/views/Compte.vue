@@ -29,7 +29,7 @@
 <script>
 import NavBarUser from '@/components/NavBarUser.vue'
 import Capchat from '@/components/Capchat.vue'
-import Dessin from '@/components/Dessin.vue'
+import Dessin from '@/components/ListeJeu.vue'
 import axios from 'axios'
 import testimg from '@/components/testimg.vue'
 
