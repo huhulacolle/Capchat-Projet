@@ -48,7 +48,7 @@ app.post('/api/inscription', async function (req, res) {
     const users = await getUsers();
     const user = users.find(u => u.nom == req.body.username);
     if (user) {
-        res.status(400).json({
+        return res.status(400).json({
             message: `L'utilisateur ${req.body.username} existe déjà`
         })
     }
