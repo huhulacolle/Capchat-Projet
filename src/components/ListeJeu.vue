@@ -1,51 +1,57 @@
 <template>
     <div>
-        <div class="container" v-if="!dessin">
-            <div class="row">
-                <div class="col text-center" v-for="data in tabJeux" :key="data">
-                    <div class="card text-center" style="width: 20rem;">
-                        <div class="card-body text-center">
-                            <h5 class="card-header" style="background-color: white"> {{data.jeu}} </h5>
-                            <br>
-                            <p class="card-text">
-                                Theme : {{data.theme}}
-                            </p>
-                            <a href="#" @click="getDessinComponents(data.id)" class="card-link">Selectionner</a>
-                            <a href="#" @click="deleteJeu(data.id)" class="card-link link-danger">Supprimer</a>
+        <transition enter-active-class="animate__animated animate__zoomIn"
+            leave-active-class="animate__animated animate__zoomOut" mode="out-in">
+            <div class="container" v-if="!dessin">
+                <br>
+                <div class="row">
+                    <div class="col text-center">
+                        <form @submit.prevent="setJeu()">
+                            <div class="card text-center" style="width: 20rem;">
+                                <div class="card-body text-center">
+                                    <h5 class="card-header" style="background-color: white">
+                                        <input type="text" placeholder="Nom" v-model="jeuInput" class="form-control"
+                                            required>
+                                    </h5>
+                                    <br>
+                                    <p class="card-text">
+                                        Theme :
+                                        <select v-model="theme" class="form-control" required>
+                                            <option v-for="t in themeSelect" :key="t.id" :value=t.id>
+                                                {{t.nom}}
+                                            </option>
+                                        </select>
+                                    </p>
+                                    <input type="submit" value="Crée le jeu" class="card-link link-primary" />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col text-center" v-for="data in tabJeux" :key="data">
+                        <div class="card text-center" style="width: 20rem;">
+                            <div class="card-body text-center">
+                                <h5 class="card-header" style="background-color: white"> {{data.jeu}} </h5>
+                                <br>
+                                <p class="card-text">
+                                    Theme : {{data.theme}}
+                                </p>
+                                <br>
+                                <a @click="getDessinComponents(data.id, data.jeu)" class="card-link">Selectionner</a>
+                                <a @click="deleteJeu(data.id)" class="card-link link-danger">Supprimer</a>    
+                                <br><br>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                <div class="col text-center">
-                    <form @submit.prevent="setJeu()">
-                        <div class="card text-center" style="width: 20rem;">
-                            <div class="card-body text-center">
-                                <h5 class="card-header" style="background-color: white">
-                                    <input type="text" placeholder="Nom" v-model="jeuInput" class="form-control"
-                                        required>
-                                </h5>
-                                <br>
-                                <p class="card-text">
-                                    Theme :
-                                    <select v-model="theme" class="form-control" required>
-                                        <option v-for="t in themeSelect" :key="t.id" :value=t.id>
-                                            {{t.nom}}
-                                        </option>
-                                    </select>
-                                </p>
-                                <input type="submit" value="Crée le jeu" class="card-link link-primary" />
-                            </div>
-                        </div>
-                    </form>
-                </div>
             </div>
-        </div>
-        <div class="container" v-else>
-            <button @click="quitDessinComponents()">
-                test
-            </button>
-            <Dessin :id=dessinComposent />
-        </div>
+            <div class="container" v-else>
+                <button @click="quitDessinComponents()" class="btn btn-dark">&laquo; Précédents</button>
+                <h1 class="text-center"> {{dessinComposentNom}} </h1> 
+                <br>
+                <Dessin :id=dessinComposent />
+            </div>
+        </transition>
+
     </div>
 </template>
 
@@ -61,7 +67,8 @@ export default {
             themeSelect: null,
             tabJeux:null,
             dessin: false,
-            dessinComposent: null
+            dessinComposent: null,
+            dessinComposentNom: null
         }
     },
     components: {
@@ -85,7 +92,6 @@ export default {
             axios.get('getJeu')
                 .then(
                     data => {
-                        console.log(data);
                         this.tabJeux = data.data;
                     }
                 )
@@ -104,7 +110,6 @@ export default {
                 })
                 .then(
                     () => {
-                        console.log("jeu envoyer");
                         this.getJeu();
                     }
                 )
@@ -117,16 +122,17 @@ export default {
             this.jeuInput = null;
         },
         // eslint-disable-next-line no-unused-vars
-        getDessinComponents(id) {
+        getDessinComponents(id, nom) {
             this.dessinComposent = id;
+            this.dessinComposentNom = nom
             this.dessin = true;
         },
         quitDessinComponents() {
             this.dessinComposent = null;
+            this.dessinComposentNom = null;
             this.dessin = false;
         },
         deleteJeu(id) {
-            console.log(id);
             axios.delete(`deleteJeu/${id}`)
             .then(
                 () => {
@@ -152,6 +158,7 @@ export default {
 
 .card-link {
     text-decoration: none;
+    cursor: pointer;
 }
 
 .link-primary {

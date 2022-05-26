@@ -55,12 +55,8 @@ app.post('/api/inscription', async function (req, res) {
 
     await setUser(req.body.username, req.body.password)
         .then(
-            () => {
-                const token = jwt.sign({
-                    username: req.body.username
-                }, process.env.SECRET_TOKEN, {
-                    expiresIn: '24h'
-                });
+            data => {
+                const token = jwt.sign({id: data.insertId ,username: req.body.username }, process.env.SECRET_TOKEN, { expiresIn: '24h' });
                 res.send({
                     message: `Le compte ${req.body.username} à été créé avec succès`,
                     token: token
@@ -144,16 +140,28 @@ app.get('/api/themes', authenticateToken, async function (req, res) {
     )
 })
 
-// app.get('/api/getDessin/:idJeu', authenticateToken, async function (req, res) {
-
-// })
+app.get('/api/getDessin/:idJeu', authenticateToken, async function (req, res) {
+    const decoded = getIdUser(req);
+    await getDessin(req.params.idJeu, decoded.id)
+    .then(
+        data => {
+            const reponse = convertBuffObjectToString(data);
+            res.json(reponse);
+        }
+    )
+    .catch(
+        err => {
+            res.status(400).json(err);
+        }
+    )
+})
 
 app.post('/api/setDessin', authenticateToken, async function (req, res) {
     if (!req.files) {
         return res.status(400).end();
     }
-    const img = req.files.img.data.toString('base64')
-    await setDessin(img, req.files.img.mimetype, req.body.TexteQuestion, req.body.ImageSinguliere, req.body.ImageSinguliere, req.body.idJeu)
+    const dessin = req.files.dessin.data.toString('base64');
+    await setDessin(dessin, req.files.dessin.mimetype, req.body.texteQuestion, req.body.imageSinguliere, req.body.idJeu)
     .then(
         () => {
             res.status(200).end();
@@ -263,11 +271,19 @@ function getThemes() {
     })
 }
 
-// function getDessin() {
-//     return new Promise((resolve, reject) => {
-//         sql.query
-//     })
-// }
+function getDessin(idJeu, idArtiste) {
+    return new Promise((resolve, reject) => {
+        sql.query(`
+            SELECT jeu.id as id, img, format, TexteQuestion, ImageSinguliere, IdJeu FROM image 
+            INNER JOIN jeu ON image.IdJeu = jeu.id
+            WHERE jeu.IdArtiste = ${idArtiste}
+            AND IdJeu = ${idJeu}
+        `, function(err, rows) {
+            if (err) return reject(err);
+            return resolve(rows);
+        })
+    })
+}
 
 function setDessin(img, format, TexteQuestion, ImageSinguliere, idJeu) {
     return new Promise((resolve, reject) => {
@@ -338,9 +354,9 @@ function getUsers() {
 
 function setUser(nom, mdp) {
     return new Promise((resolve, reject) => {
-        sql.query(`INSERT INTO artiste(nom, mdp) VALUES ('${nom}','${hash(mdp.toString())}')`, function (err) {
+        sql.query(`INSERT INTO artiste(nom, mdp) VALUES ('${nom}','${hash(mdp.toString())}')`, function (err, rows) {
             if (err) return reject(err);
-            return resolve();
+            return resolve(rows);
         })
     })
 }
