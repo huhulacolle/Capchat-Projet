@@ -83,7 +83,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="submit" data-bs-dismiss="modal" aria-label="Close" class="btn btn-primary">Connexion</button>
+                            <button type="submit" aria-label="Close" class="btn btn-primary">Connexion</button>
                         </div>
                     </div>
                 </form>
@@ -120,6 +120,7 @@ export default {
             .then(
                 data => {
                     this.errorBoolConnexion = false;
+                    this.$refs.Close.click();
                     localStorage.setItem('token', data.data.token)
                     this.$router.push('/MonCompte')
                 }
