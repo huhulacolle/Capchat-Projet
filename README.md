@@ -1,24 +1,32 @@
-# capchat-projet
 
-## Project setup
+Capchat Projet
+=============
+## Installation des dépendances
 ```
 npm install
 ```
+ ### **Front-end :** 
+ <br>
 
-### Compiles and hot-reloads for development
+### Lancer la compilation en mode développeur (serveur de dev + rechargement à chaud)
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
+### Compilation pour la productrion
 ```
 npm run build
 ```
+<br>
 
-### Lints and fixes files
-```
-npm run lint
-```
+ ### **Back-end :** 
+<br>
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### Lancer l'api
+```
+npm run api
+```
+### Lancer l'api en mode développeur (redémarrage automatique de l'api)
+```
+npm run api:dev
+```
