@@ -15,8 +15,8 @@
                                     </h5>
                                     <br>
                                     <p class="card-text">
-                                        Theme :
-                                        <select v-model="theme" class="form-control" required>
+                                        <select class="form-control" id="theme" required>
+                                                <option value="" disabled selected hidden>Theme</option>
                                             <option v-for="t in themeSelect" :key="t.id" :value=t.id>
                                                 {{t.nom}}
                                             </option>
@@ -63,7 +63,6 @@ export default {
     data() {
         return {
             jeuInput: null,
-            theme: null,
             themeSelect: null,
             tabJeux:null,
             dessin: false,
@@ -106,7 +105,7 @@ export default {
         setJeu() {
             axios.post('sendJeu', {
                     nom: this.jeuInput,
-                    theme: this.theme
+                    theme: document.getElementById('theme').value
                 })
                 .then(
                     () => {

@@ -174,6 +174,20 @@ app.post('/api/setDessin', authenticateToken, async function (req, res) {
     )
 })
 
+app.delete('/api/deleteDessin/:id', authenticateToken, async function (req, res) {
+    await deleteDessin(req.params.id)
+    .then(
+        () => {
+            res.status(200).end();
+        }
+    )
+    .catch(
+        err => {
+            res.status(400).json(err);
+        }
+    )
+})
+
 app.post('/api/testsendimg', authenticateToken, async function (req, res) {
     if (!req.files) {
         return res.status(400).end();
@@ -274,10 +288,11 @@ function getThemes() {
 function getDessin(idJeu, idArtiste) {
     return new Promise((resolve, reject) => {
         sql.query(`
-            SELECT jeu.id as id, img, format, TexteQuestion, ImageSinguliere, IdJeu FROM image 
+            SELECT image.id AS id, img, format, TexteQuestion, ImageSinguliere, IdJeu FROM image 
             INNER JOIN jeu ON image.IdJeu = jeu.id
             WHERE jeu.IdArtiste = ${idArtiste}
             AND IdJeu = ${idJeu}
+            ORDER BY image.id DESC
         `, function(err, rows) {
             if (err) return reject(err);
             return resolve(rows);
@@ -289,9 +304,20 @@ function setDessin(img, format, TexteQuestion, ImageSinguliere, idJeu) {
     return new Promise((resolve, reject) => {
         sql.query(`
             INSERT INTO image (img, format, TexteQuestion, ImageSinguliere, IdJeu) 
-            VALUES ('${img}', '${format}', ${TexteQuestion}, ${ImageSinguliere}, ${idJeu})
+            VALUES ('${img}', '${format}', '${TexteQuestion}', ${ImageSinguliere}, ${idJeu})
             `, function (err,) {
             if (err) return reject(err);
+            return resolve();
+        })
+    })
+}
+
+function deleteDessin(id) {
+    return new Promise((resolve, reject) => {
+        sql.query(`
+            DELETE FROM image WHERE id = ${id}
+        `, function(err) {
+            if(err) return reject(err);
             return resolve();
         })
     })

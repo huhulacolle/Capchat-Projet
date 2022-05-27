@@ -5,11 +5,22 @@
                 <div class="col text-center">
                     <form @submit.prevent="sendingDessin()">
                         <div class="card text-center" style="width: 20rem;">
-                            <svg id="svg" style="background-color:beige" />
+                            <svg id="svg" style="background-color:grey" />
                             <div class="card-body">
-                                <input type="file" id="dessin"> Image Singulière
-                                <input type="text" disabled>
-                                <input type="submit" value="Envoyer" class="card-link" />
+                                <div class="mb-3">
+                                    <label for="formFileSm" class="form-label"></label>
+                                    <input class="form-control form-control-sm" id="dessin" type="file">
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" @click="radio()" type="checkbox" v-model="imageSinguliereBool" id="flexCheckDefault">
+                                    <label class="form-check-label" for="flexCheckDefault">
+                                        Image Singulière
+                                    </label>
+                                    <br><br>
+                                    <input type="text" v-model="indice" class="form-control" placeholder="Indice" v-bind="{'disabled': !imageSinguliereBool }">
+                                </div>
+
+                                <input type="submit" value="Envoyer" class="card-link link-primary" />
                             </div>
                         </div>
                     </form>
@@ -18,8 +29,8 @@
                     <div class="card text-center" style="width: 20rem;">
                         <img :src="'data:' + dessin.format + ';base64, ' + dessin.img" class="card-img-top" alt="...">
                         <div class="card-body text-center">
-                            <div v-if="dessin.ImageSinguliere"> Image Singulière <br> {{dessin.TexteQuestion}} </div>
-                            <a class="card-link link-danger">Supprimer</a>
+                            <div v-if="dessin.ImageSinguliere"> <strong>Image Singulière</strong> <br> indice : {{dessin.TexteQuestion}} <br> </div>
+                            <a @click="deleteDessin(dessin.id)" class="card-link link-danger">Supprimer</a>
                         </div>
                     </div>
                 </div>
@@ -37,6 +48,8 @@ export default {
     },
     data() {
         return {
+            imageSinguliereBool: false,
+            indice: null,
             dessins: null
         }
     },
@@ -49,7 +62,6 @@ export default {
             .then(
                 data => {
                     this.dessins = data.data
-                    console.log(data.data);
                 }
             )
             .catch(
@@ -62,8 +74,8 @@ export default {
             let formData = new FormData();
             const dessin = document.getElementById('dessin')
             formData.append("dessin", dessin.files[0]);
-            formData.append("texteQuestion", null);
-            formData.append("imageSinguliere", 0);
+            formData.append("texteQuestion", this.indice);
+            formData.append("imageSinguliere", this.imageSinguliereBool ? 1 : 0);
             formData.append("idJeu", this.id);
             axios.post('setDessin', formData, {
                 'Content-Type': 'multipart/form-data'
@@ -79,6 +91,24 @@ export default {
                     console.error(err);
                 }
             )
+        },
+        deleteDessin(id) {
+            axios.delete(`deleteDessin/${id}`)
+            .then(
+                () => {
+                    this.getDessin();
+                }
+            )
+            .catch(
+                err => {
+                    console.error(err);
+                }
+            )
+        },
+        radio() {
+            if (this.imageSinguliereBool) {
+                this.indice = null;
+            }
         }
     }
 }
