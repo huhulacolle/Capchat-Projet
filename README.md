@@ -6,7 +6,6 @@ Capchat Projet
 npm install
 ```
  ### **Front-end :** 
- <br>
 
 ### Lancer la compilation en mode développeur (serveur de dev + rechargement à chaud)
 ```
@@ -20,7 +19,6 @@ npm run build
 <br>
 
  ### **Back-end :** 
-<br>
 
 ### Lancer l'api
 ```
