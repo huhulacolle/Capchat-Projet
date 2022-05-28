@@ -21,15 +21,13 @@ app.use(cors());
 app.use(express.json())
 app.use(fileUpload());
 
-const sqlConfig = {
+var sql = mysql.createPool({
     host: "127.0.0.1",
     user: "root",
     password: "",
     database: "Capchat",
     multipleStatements: true
-}
-
-var sql = mysql.createPool(sqlConfig);
+});
 
 // route 
 
