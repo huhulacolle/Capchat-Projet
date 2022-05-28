@@ -25,7 +25,8 @@ const sqlConfig = {
     host: "127.0.0.1",
     user: "root",
     password: "",
-    database: "Capchat"    
+    database: "Capchat",
+    multipleStatements: true
 }
 
 var sql = mysql.createPool(sqlConfig);
@@ -265,11 +266,8 @@ function setJeu(nom, artiste, theme) {
 function deleteJeu(id) {
     return new Promise((resolve, reject) => {
         sql.query(`
-            DELETE jeu, image 
-            FROM jeu
-            LEFT JOIN image ON jeu.id = image.IdJeu 
-            WHERE jeu.id = ${id}
-        `, function (err) {
+        DELETE FROM image WHERE idJeu = ${id};
+        DELETE FROM jeu WHERE jeu.id = ${id};`, function (err) {
             if (err) return reject(err);
             return resolve();
         })
