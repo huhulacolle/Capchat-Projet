@@ -300,7 +300,7 @@ function setDessin(img, format, TexteQuestion, ImageSinguliere, idJeu) {
     return new Promise((resolve, reject) => {
         sql.query(`
             INSERT INTO image (img, format, TexteQuestion, ImageSinguliere, IdJeu) 
-            VALUES ('${img}', '${format}', '${TexteQuestion}', ${ImageSinguliere}, ${idJeu})
+            VALUES ('${img}', '${format}', "${TexteQuestion}", ${ImageSinguliere}, ${idJeu})
             `, function (err,) {
             if (err) return reject(err);
             return resolve();
