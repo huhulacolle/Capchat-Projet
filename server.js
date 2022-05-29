@@ -10,7 +10,7 @@ require('dotenv').config();
 
 // crée un fichier .env si il n'existe pas
 if (!fs.existsSync('.env')) {
-    fs.appendFile('.env', `SECRET_TOKEN=${crypto.randomBytes(64).toString('hex')}\nSECRET_TOKEN_MDP=${crypto.randomBytes(64).toString('hex')}`, function (err) {
+    fs.appendFile('.env', `SECRET_TOKEN=${crypto.randomBytes(64).toString('hex')}\nSECRET_TOKEN_MDP=${crypto.randomBytes(64).toString('hex')}`, function(err) {
         if (err) throw err;
     });
 }
@@ -31,7 +31,7 @@ var sql = mysql.createPool({
 
 // route 
 
-app.post('/api/connexion', async function (req, res) {
+app.post('/api/connexion', async function(req, res) {
     const users = await getUsers();
     const user = users.find(u => u.nom == req.body.username && u.mdp == hash(req.body.password.toString()));
     if (!user) {
@@ -43,7 +43,7 @@ app.post('/api/connexion', async function (req, res) {
     return res.send({ token: token })
 })
 
-app.post('/api/inscription', async function (req, res) {
+app.post('/api/inscription', async function(req, res) {
     const users = await getUsers();
     const user = users.find(u => u.nom == req.body.username);
     if (user) {
@@ -64,14 +64,14 @@ app.post('/api/inscription', async function (req, res) {
         )
         .catch(
             err => {
-                res.status(400).json({
+                return res.status(400).json({
                     message: `erreur : ${err}`
                 });
             }
         );
 })
 
-app.get('/api/compte', authenticateToken, function (req, res) {
+app.get('/api/compte', authenticateToken, function(req, res) {
     const token = req.headers.authorization && extractBearerToken(req.headers.authorization)
     const decoded = jwt.decode(token, {
         complete: false
@@ -81,70 +81,16 @@ app.get('/api/compte', authenticateToken, function (req, res) {
     })
 })
 
-app.get('/api/getJeu', authenticateToken, async function (req, res) {
-    const decoded = getIdUser(req);
-    await getJeu(decoded.id)
+app.get('/api/Capchat', authenticateToken, async function(req, res) {
+    await getCapchat(req.body.idJeu)
     .then(
         data => {
-            res.json(data)
-        }
-    )
-    .catch(
-        err => {
-            res.status(400).json(err)
-        }
-    )
-})
-
-app.post('/api/sendJeu', authenticateToken, async function (req, res) {
-    const decoded = getIdUser(req)
-    await setJeu(req.body.nom, decoded.id, req.body.theme)
-    .then(
-        () => {
-            res.status(200).end();
-        }
-    )
-    .catch(
-        err => {
-            res.status(400).json(err);
-        }
-    )
-})
-
-app.delete('/api/deleteJeu/:id', authenticateToken, async function (req, res) {
-    await deleteJeu(req.params.id)
-    .then(
-        () => {
-            res.status(200).end();
-        }
-    )
-    .catch(
-        err => {
-            res.status(400).json(err)
-        }
-    )
-})
-
-app.get('/api/themes', authenticateToken, async function (req, res) {
-    await getThemes()
-    .then(
-        data => {
-            res.json(data);
-        }
-    )
-    .catch(
-        err => {
-            res.status(400).json(err);
-        }
-    )
-})
-
-app.get('/api/getDessin/:idJeu', authenticateToken, async function (req, res) {
-    const decoded = getIdUser(req);
-    await getDessin(req.params.idJeu, decoded.id)
-    .then(
-        data => {
-            const reponse = convertBuffObjectToString(data);
+            const reponse = convertBuffObjectToString(data[0]);
+            const imageSing = convertBuffObjectToString(data[1])
+            reponse.push(imageSing[0]);
+            for (let i = 0; i < reponse.length; i++) {
+                reponse[i].ordre = i + 1              
+            }
             res.json(reponse);
         }
     )
@@ -155,7 +101,81 @@ app.get('/api/getDessin/:idJeu', authenticateToken, async function (req, res) {
     )
 })
 
-app.post('/api/setDessin', authenticateToken, async function (req, res) {
+app.get('/api/getJeu', authenticateToken, async function(req, res) {
+    const decoded = getIdUser(req);
+    await getJeu(decoded.id)
+    .then(
+        data => {
+            return res.json(data)
+        }
+    )
+    .catch(
+        err => {
+            return res.status(400).json(err)
+        }
+    )
+})
+
+app.post('/api/sendJeu', authenticateToken, async function(req, res) {
+    const decoded = getIdUser(req)
+    await setJeu(req.body.nom, decoded.id, req.body.theme)
+    .then(
+        () => {
+            return res.status(200).end();
+        }
+    )
+    .catch(
+        err => {
+            return res.status(400).json(err);
+        }
+    )
+})
+
+app.delete('/api/deleteJeu/:id', authenticateToken, async function(req, res) {
+    await deleteJeu(req.params.id)
+    .then(
+        () => {
+            return res.status(200).end();
+        }
+    )
+    .catch(
+        err => {
+            return res.status(400).json(err)
+        }
+    )
+})
+
+app.get('/api/themes', authenticateToken, async function(req, res) {
+    await getThemes()
+    .then(
+        data => {
+            return res.json(data);
+        }
+    )
+    .catch(
+        err => {
+            return res.status(400).json(err);
+        }
+    )
+})
+
+app.get('/api/getDessin/:idJeu', authenticateToken, async function(req, res) {
+    const decoded = getIdUser(req);
+    await getDessin(req.params.idJeu, decoded.id)
+    .then(
+        data => {
+            const reponse = convertBuffObjectToString(data);
+            res.json(reponse);
+        }
+    )
+    .catch(
+        err => {
+            return res.status(400).json(err);
+        }
+    )
+})
+
+app.post('/api/setDessin', authenticateToken, async function(req, res) {
     if (!req.files) {
         return res.status(400).end();
     }
@@ -163,50 +183,50 @@ app.post('/api/setDessin', authenticateToken, async function (req, res) {
     await setDessin(dessin, req.files.dessin.mimetype, req.body.texteQuestion, req.body.imageSinguliere, req.body.idJeu)
     .then(
         () => {
-            res.status(200).end();
+            return res.status(200).end();
         }
     )
     .catch(
         err => {
-            res.status(400).json(err);
+            return res.status(400).json(err);
         }
     )
 })
 
-app.delete('/api/deleteDessin/:id', authenticateToken, async function (req, res) {
+app.delete('/api/deleteDessin/:id', authenticateToken, async function(req, res) {
     await deleteDessin(req.params.id)
     .then(
         () => {
-            res.status(200).end();
+            return res.status(200).end();
         }
     )
     .catch(
         err => {
-            res.status(400).json(err);
+            return res.status(400).json(err);
         }
     )
 })
 
-app.post('/api/testsendimg', authenticateToken, async function (req, res) {
+app.post('/api/testsendimg', authenticateToken, async function(req, res) {
     if (!req.files) {
         return res.status(400).end();
     }
     await setImg(req.files.img.data.toString('base64'), req.files.img.mimetype)
         .then(
             () => {
-                res.status(200).end();
+                return res.status(200).end();
             }
         )
         .catch(
             err => {
-                res.status(400).json({
+                return res.status(400).json({
                     message: `erreur : ${err}`
                 })
             }
         )
 })
 
-app.get('/api/testgetimg', authenticateToken, async function (req, res) {
+app.get('/api/testgetimg', authenticateToken, async function(req, res) {
     await getImg()
         .then(
             data => {
@@ -216,7 +236,7 @@ app.get('/api/testgetimg', authenticateToken, async function (req, res) {
         )
         .catch(
             err => {
-                res.status(400).json(err);
+                return res.status(400).json(err);
             }
         )
 })
@@ -234,6 +254,18 @@ function convertBuffObjectToString(data) {
         data[i].img = data[i].img.toString();
     }
     return data
+}
+
+function getCapchat(idJeu) {
+    return new Promise((resolve, reject) => {
+        sql.query(`
+        SELECT img, format, TexteQuestion, ImageSinguliere FROM image WHERE idJeu = ${idJeu} AND imageSinguliere = 0 ORDER BY RAND() LIMIT 9;
+        SELECT img, format, TexteQuestion, ImageSinguliere FROM image WHERE idJeu = ${idJeu} AND imageSinguliere = 1 ORDER BY RAND() LIMIT 1;
+        `, function(err, rows) {
+            if (err) return reject(err)
+            return resolve(rows);
+        })
+    })
 }
 
 function getJeu(id) {
@@ -265,7 +297,7 @@ function deleteJeu(id) {
     return new Promise((resolve, reject) => {
         sql.query(`
         DELETE FROM image WHERE idJeu = ${id};
-        DELETE FROM jeu WHERE jeu.id = ${id};`, function (err) {
+        DELETE FROM jeu WHERE jeu.id = ${id};`, function(err) {
             if (err) return reject(err);
             return resolve();
         })
