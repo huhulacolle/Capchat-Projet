@@ -5,7 +5,13 @@ Capchat Projet
 ```
 npm install
 ```
- ### **Front-end :** 
+## Migration de la base de données
+```
+npm run migration
+```
+<br>
+
+### **Front-end :** 
 
 ### Lancer la compilation en mode développeur (serveur de dev + rechargement à chaud)
 ```
