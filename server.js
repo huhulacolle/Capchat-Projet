@@ -60,7 +60,7 @@ app.post('/api/inscription', async function(req, res) {
     await setUser(req.body.username, req.body.password)
         .then(
             data => {
-                const token = jwt.sign({id: data.insertId ,username: req.body.username }, process.env.SECRET_TOKEN, { expiresIn: '24h' });
+                const token = jwt.sign({id: data.insertId ,username: req.body.username }, process.env.SECRET_TOKEN, { expiresIn: '12h' });
                 res.send({
                     message: `Le compte ${req.body.username} à été créé avec succès`,
                     token: token
