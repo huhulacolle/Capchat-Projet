@@ -86,8 +86,8 @@ app.get('/api/compte', authenticateToken, function(req, res) {
     })
 })
 
-app.get('/api/Capchat', authenticateToken, async function(req, res) {
-    await getCapchat(req.body.idJeu)
+app.get('/api/Capchat/:idJeu', authenticateToken, async function(req, res) {
+    await getCapchat(req.params.idJeu)
     .then(
         data => {
             const reponse = convertBuffObjectToString(data[0]);
