@@ -10,7 +10,12 @@ require('dotenv').config();
 
 // crée un fichier .env si il n'existe pas
 if (!fs.existsSync('.env')) {
-    fs.appendFile('.env', `SECRET_TOKEN=${crypto.randomBytes(64).toString('hex')}\nSECRET_TOKEN_MDP=${crypto.randomBytes(64).toString('hex')}`, function(err) {
+    fs.appendFile('.env', `SECRET_TOKEN=${crypto.randomBytes(64).toString('hex')}
+SECRET_TOKEN_MDP=${crypto.randomBytes(64).toString('hex')}
+SQL_HOST=127.0.0.1
+SQL_USER=root
+SQL_PASSWORD=
+SQL_DATABASE=Capchat`, function(err) {
         if (err) throw err;
     });
 }
@@ -22,10 +27,10 @@ app.use(express.json())
 app.use(fileUpload());
 
 var sql = mysql.createPool({
-    host: "127.0.0.1",
-    user: "root",
-    password: "",
-    database: "Capchat",
+    host: process.env.SQL_HOST,
+    user: process.env.SQL_USER,
+    password: process.env.SQL_PASSWORD,
+    database: process.env.SQL_DATABASE,
     multipleStatements: true
 });
 

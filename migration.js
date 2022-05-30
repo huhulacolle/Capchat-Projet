@@ -1,7 +1,7 @@
-const host = '127.0.0.1';
-const user = 'root';
-const password = '';
-const database = 'CapchatTest';
+const host = process.env.SQL_HOST;
+const user = process.env.SQL_USER;
+const password = process.env.SQL_PASSWORD;
+const database = process.env.SQL_DATABASE;
 
 const Importer = require('mysql-import');
 const importer = new Importer({
