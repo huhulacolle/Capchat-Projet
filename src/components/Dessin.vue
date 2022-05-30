@@ -25,6 +25,9 @@
                         </div>
                     </form>
                 </div>
+                <div class="col text-center" v-if="loading">
+                    <div class="spinner-border text-primary spinner-vertical-align:" role="status" />
+                </div>
                 <div class="col text-center" v-for="dessin in dessins" :key="dessin.id">
                     <div class="card text-center" style="width: 20rem;">
                         <img :src="'data:' + dessin.format + ';base64, ' + dessin.img" class="card-img-top" alt="...">
@@ -50,7 +53,8 @@ export default {
         return {
             imageSinguliereBool: false,
             indice: null,
-            dessins: null
+            dessins: null,
+            loading: true
         }
     },
     created() {
@@ -61,6 +65,7 @@ export default {
             axios.get(`getDessin/${this.id}`)
             .then(
                 data => {
+                    this.loading = false;
                     this.dessins = data.data
                 }
             )
