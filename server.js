@@ -91,8 +91,9 @@ app.get('/api/Capchat/:idJeu', authenticateToken, async function(req, res) {
     .then(
         data => {
             const reponse = convertBuffObjectToString(data[0]);
-            const imageSing = convertBuffObjectToString(data[1])
-            reponse.push(imageSing[0]);
+            const imageSing = convertBuffObjectToString(data[1])[0]
+            reponse[Math.floor(Math.random() * 8)] = imageSing[0]
+            
             for (let i = 0; i < reponse.length; i++) {
                 reponse[i].ordre = i + 1              
             }
