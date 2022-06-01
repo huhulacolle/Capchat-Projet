@@ -4,21 +4,8 @@ const cors = require('cors')
 const fileUpload = require('express-fileupload')
 const port = 3000
 var mysql = require('mysql');
-const fs = require('fs');
 const crypto = require('crypto');
 require('dotenv').config();
-
-// crée un fichier .env si il n'existe pas
-if (!fs.existsSync('.env')) {
-    fs.appendFile('.env', `SECRET_TOKEN=${crypto.randomBytes(64).toString('hex')}
-SECRET_TOKEN_MDP=${crypto.randomBytes(64).toString('hex')}
-SQL_HOST=127.0.0.1
-SQL_USER=root
-SQL_PASSWORD=
-SQL_DATABASE=Capchat`, function(err) {
-        if (err) throw err;
-    });
-}
 
 var app = express();
 app.use(cors());

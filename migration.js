@@ -1,3 +1,19 @@
+const fs = require('fs');
+const crypto = require('crypto'); 
+
+// crée un fichier .env si il n'existe pas
+if (fs.existsSync('.env')) {
+    fs.appendFile('.env', `
+SECRET_TOKEN=${crypto.randomBytes(64).toString('hex')}
+SECRET_TOKEN_MDP=${crypto.randomBytes(64).toString('hex')}`, function(err) {
+        if (err) throw err;
+    });
+}
+else {
+    console.log("Fichier .env non trouvé, merci de le créer en se basant sur le fichier .env.example");
+    process.exit();
+}
+
 const host = process.env.SQL_HOST;
 const user = process.env.SQL_USER;
 const password = process.env.SQL_PASSWORD;

@@ -18,6 +18,9 @@
                 <div v-else-if="menuSelect == 'Tes jeux / Dessins'">
                     <Dessin/>
                 </div>
+                <div v-else-if="menuSelect == 'test Capchat'">
+                    <TestCapchat />
+                </div>
             </transition>
         </div>
     </div>
@@ -28,6 +31,7 @@ import NavBarUser from '@/components/NavBarUser.vue'
 import Capchat from '@/components/Capchat.vue'
 import Dessin from '@/components/ListeJeu.vue'
 import axios from 'axios'
+import TestCapchat from '@/components/TestCapchat.vue'
 
 export default {
     data() {
@@ -39,6 +43,7 @@ export default {
             menus: [
                 "ton Capchat",
                 "Tes jeux / Dessins",
+                "test Capchat"
             ],
             menuSelect: null
         }
@@ -51,7 +56,8 @@ export default {
     components: {
         NavBarUser,
         Capchat,
-        Dessin
+        Dessin,
+        TestCapchat
     },
     methods: {
         user() {
