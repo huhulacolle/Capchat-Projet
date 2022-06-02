@@ -3,12 +3,14 @@
         <div class="container">
             <div>
                 <button @click="getCapchat()">refresh</button>
+                <br>
+                <div class="text-center ">
+                    <h4>{{indice}}</h4>
+                </div>
                 <div class="row align-items-start">
                     <div class="col-sm" v-for="capchat in capchats" :key="capchat.ordre">
-                        <img style="width: 150px; height: auto;" :src="'data:' + capchat.format + ';base64, ' + capchat.img" :alt="capchat.ordre" />
-                        <div v-if="capchat.ImageSinguliere">
-                            {{capchat.TexteQuestion}}
-                        </div>
+                        <img :id="capchat.ordre" @click="setReponse(capchat)" style="width: 150px; height: 150px;"
+                            :src="'data:' + capchat.format + ';base64, ' + capchat.img" :alt="capchat.ordre" />
                     </div>
                 </div>
             </div>
@@ -24,18 +26,29 @@ export default {
     data() {
         return {
             idJeu: 23,
-            capchats: null
+            capchats: null,
+            indice: null
         }
     },
     created() {
         this.getCapchat();
     },
     methods: {
+        setReponse(capchat) {
+            if (capchat.ImageSinguliere) {
+                console.log("Win !!!!!");
+            }
+        },
         getCapchat() {
             axios.get(`Capchat/${this.idJeu}`)
                 .then(
                     data => {
                         console.log(data.data);
+                        data.data.forEach(capchat => {
+                            if (capchat.ImageSinguliere) {
+                                this.indice = capchat.TexteQuestion;
+                            }
+                        });
                         this.capchats = data.data;
                     }
 
@@ -53,5 +66,8 @@ export default {
 <style scoped>
 .container {
     max-width: 600px;
+}
+img {
+    cursor: pointer;
 }
 </style>
