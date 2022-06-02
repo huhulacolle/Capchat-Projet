@@ -21,7 +21,38 @@ var sql = mysql.createPool({
     multipleStatements: true
 });
 
-// route 
+function convertBuffObjectToString(data) {
+    for (let i = 0; i < data.length; i++) {
+        data[i].img = data[i].img.toString();
+    }
+    return data
+}
+
+// verifie le token de l'utilisateur
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization']
+    const token = authHeader && authHeader.split(' ')[1]
+    if (token == null) return res.status(401).json({
+        message: 'Erreur : token manquant'
+    })
+
+    jwt.verify(token, process.env.SECRET_TOKEN, (err, user) => {
+        if (err) return res.status(403).json({
+            message: `Erreur : ${err}`
+        })
+        req.user = user
+        next()
+    })
+}
+
+function extractBearerToken(headerValue) {
+    if (typeof headerValue !== 'string') {
+        return false
+    }
+
+    const matches = headerValue.match(/(bearer)\s+(\S+)/i)
+    return matches && matches[2]
+}
 
 app.post('/api/connexion', async function(req, res) {
     const users = await getUsers();
@@ -73,6 +104,33 @@ app.get('/api/compte', authenticateToken, function(req, res) {
     })
 })
 
+function getIdUser(req) {
+    const token = req.headers.authorization && extractBearerToken(req.headers.authorization)
+    const decoded = jwt.decode(token, {
+        complete: false
+    })
+    return decoded
+}
+
+
+function getUsers() {
+    return new Promise((resolve, reject) => {
+        sql.query('SELECT id, nom, mdp FROM artiste', function (err, rows) {
+            if (err) return reject(err)
+            return resolve(rows);
+        })
+    })
+}
+
+function setUser(nom, mdp) {
+    return new Promise((resolve, reject) => {
+        sql.query(`INSERT INTO artiste(nom, mdp) VALUES ('${nom}','${hash(mdp.toString())}')`, function (err, rows) {
+            if (err) return reject(err);
+            return resolve(rows);
+        })
+    })
+}
+
 app.get('/api/Capchat/:idJeu', authenticateToken, async function(req, res) {
     await getCapchat(req.params.idJeu)
     .then(
@@ -93,6 +151,19 @@ app.get('/api/Capchat/:idJeu', authenticateToken, async function(req, res) {
         }
     )
 })
+
+function getCapchat(idJeu) {
+    return new Promise((resolve, reject) => {
+        sql.query(`
+        SELECT img, format, TexteQuestion, ImageSinguliere FROM image WHERE idJeu = ${idJeu} AND imageSinguliere = 0 ORDER BY RAND() LIMIT 9;
+        SELECT img, format, TexteQuestion, ImageSinguliere FROM image WHERE idJeu = ${idJeu} AND imageSinguliere = 1 ORDER BY RAND() LIMIT 1;
+        `, function(err, rows) {
+            if (err) return reject(err)
+            return resolve(rows);
+        })
+    })
+}
+
 
 app.get('/api/getJeu', authenticateToken, async function(req, res) {
     const decoded = getIdUser(req);
@@ -138,6 +209,43 @@ app.delete('/api/deleteJeu/:id', authenticateToken, async function(req, res) {
     )
 })
 
+function setJeu(nom, artiste, theme) {
+    return new Promise((resolve, reject) => {
+        const token = crypto.randomBytes(8).toString('hex');
+        sql.query(`INSERT INTO jeu (nom, token, idArtiste, idTheme) VALUES ('${nom}', '${token}', ${artiste}, ${theme})`, function(err) {
+            if (err) return reject(err);
+            return resolve();
+        })
+    })
+}
+
+function deleteJeu(id) {
+    return new Promise((resolve, reject) => {
+        sql.query(`
+        DELETE FROM image WHERE idJeu = ${id};
+        DELETE FROM jeu WHERE jeu.id = ${id};`, function(err) {
+            if (err) return reject(err);
+            return resolve();
+        })
+    })
+}
+
+function getJeu(id) {
+    return new Promise((resolve, reject) => {
+        sql.query(
+            `SELECT jeu.id AS id, jeu.nom AS jeu, theme.nom AS theme
+            FROM jeu 
+            INNER JOIN theme ON jeu.IdTheme = theme.id 
+            WHERE jeu.IdArtiste = ${id} 
+            ORDER BY jeu.id DESC`
+        , function(err, rows) {
+            if (err) return reject(err);
+            return resolve(rows);
+        })
+    })
+}
+
+
 app.get('/api/themes', authenticateToken, async function(req, res) {
     await getThemes()
     .then(
@@ -151,6 +259,16 @@ app.get('/api/themes', authenticateToken, async function(req, res) {
         }
     )
 })
+
+function getThemes() {
+    return new Promise((resolve, reject) => {
+        sql.query('SELECT * FROM theme', function(err, rows) {
+            if (err) reject(err);
+            return resolve(rows);
+        })
+    })
+}
+
 
 app.get('/api/getDessin/:idJeu', authenticateToken, async function(req, res) {
     const decoded = getIdUser(req);
@@ -200,112 +318,6 @@ app.delete('/api/deleteDessin/:id', authenticateToken, async function(req, res) 
     )
 })
 
-app.post('/api/testsendimg', authenticateToken, async function(req, res) {
-    if (!req.files) {
-        return res.status(400).end();
-    }
-    await setImg(req.files.img.data.toString('base64'), req.files.img.mimetype)
-        .then(
-            () => {
-                return res.status(200).end();
-            }
-        )
-        .catch(
-            err => {
-                return res.status(400).json({
-                    message: `erreur : ${err}`
-                })
-            }
-        )
-})
-
-app.get('/api/testgetimg', authenticateToken, async function(req, res) {
-    await getImg()
-        .then(
-            data => {
-                const reponse = convertBuffObjectToString(data);
-                res.json(reponse);
-            }
-        )
-        .catch(
-            err => {
-                return res.status(400).json(err);
-            }
-        )
-})
-
-function getIdUser(req) {
-    const token = req.headers.authorization && extractBearerToken(req.headers.authorization)
-    const decoded = jwt.decode(token, {
-        complete: false
-    })
-    return decoded
-}
-
-function convertBuffObjectToString(data) {
-    for (let i = 0; i < data.length; i++) {
-        data[i].img = data[i].img.toString();
-    }
-    return data
-}
-
-function getCapchat(idJeu) {
-    return new Promise((resolve, reject) => {
-        sql.query(`
-        SELECT img, format, TexteQuestion, ImageSinguliere FROM image WHERE idJeu = ${idJeu} AND imageSinguliere = 0 ORDER BY RAND() LIMIT 9;
-        SELECT img, format, TexteQuestion, ImageSinguliere FROM image WHERE idJeu = ${idJeu} AND imageSinguliere = 1 ORDER BY RAND() LIMIT 1;
-        `, function(err, rows) {
-            if (err) return reject(err)
-            return resolve(rows);
-        })
-    })
-}
-
-function getJeu(id) {
-    return new Promise((resolve, reject) => {
-        sql.query(
-            `SELECT jeu.id AS id, jeu.nom AS jeu, theme.nom AS theme
-            FROM jeu 
-            INNER JOIN theme ON jeu.IdTheme = theme.id 
-            WHERE jeu.IdArtiste = ${id} 
-            ORDER BY jeu.id DESC`
-        , function(err, rows) {
-            if (err) return reject(err);
-            return resolve(rows);
-        })
-    })
-}
-
-function setJeu(nom, artiste, theme) {
-    return new Promise((resolve, reject) => {
-        const token = crypto.randomBytes(8).toString('hex');
-        sql.query(`INSERT INTO jeu (nom, token, idArtiste, idTheme) VALUES ('${nom}', '${token}', ${artiste}, ${theme})`, function(err) {
-            if (err) return reject(err);
-            return resolve();
-        })
-    })
-}
-
-function deleteJeu(id) {
-    return new Promise((resolve, reject) => {
-        sql.query(`
-        DELETE FROM image WHERE idJeu = ${id};
-        DELETE FROM jeu WHERE jeu.id = ${id};`, function(err) {
-            if (err) return reject(err);
-            return resolve();
-        })
-    })
-}
-
-function getThemes() {
-    return new Promise((resolve, reject) => {
-        sql.query('SELECT * FROM theme', function(err, rows) {
-            if (err) reject(err);
-            return resolve(rows);
-        })
-    })
-}
-
 function getDessin(idJeu, idArtiste) {
     return new Promise((resolve, reject) => {
         sql.query(`
@@ -344,6 +356,40 @@ function deleteDessin(id) {
     })
 }
 
+app.post('/api/testsendimg', authenticateToken, async function(req, res) {
+    if (!req.files) {
+        return res.status(400).end();
+    }
+    await setImg(req.files.img.data.toString('base64'), req.files.img.mimetype)
+        .then(
+            () => {
+                return res.status(200).end();
+            }
+        )
+        .catch(
+            err => {
+                return res.status(400).json({
+                    message: `erreur : ${err}`
+                })
+            }
+        )
+})
+
+app.get('/api/testgetimg', authenticateToken, async function(req, res) {
+    await getImg()
+        .then(
+            data => {
+                const reponse = convertBuffObjectToString(data);
+                res.json(reponse);
+            }
+        )
+        .catch(
+            err => {
+                return res.status(400).json(err);
+            }
+        )
+})
+
 function setImg(img, format) {
     return new Promise((resolve, reject) => {
         sql.query(`INSERT INTO testimg (img, format) VALUES ('${img}', '${format}')`, function (err,) {
@@ -358,52 +404,6 @@ function getImg() {
         sql.query('SELECT * FROM testimg ORDER BY id DESC', function (err, rows) {
             if (err) return reject(err);
             return resolve(rows)
-        })
-    })
-}
-
-// verifie le token de l'utilisateur
-function authenticateToken(req, res, next) {
-    const authHeader = req.headers['authorization']
-    const token = authHeader && authHeader.split(' ')[1]
-    if (token == null) return res.status(401).json({
-        message: 'Erreur : token manquant'
-    })
-
-    jwt.verify(token, process.env.SECRET_TOKEN, (err, user) => {
-        if (err) return res.status(403).json({
-            message: `Erreur : ${err}`
-        })
-        req.user = user
-        next()
-    })
-}
-
-// function 
-
-function extractBearerToken(headerValue) {
-    if (typeof headerValue !== 'string') {
-        return false
-    }
-
-    const matches = headerValue.match(/(bearer)\s+(\S+)/i)
-    return matches && matches[2]
-}
-
-function getUsers() {
-    return new Promise((resolve, reject) => {
-        sql.query('SELECT id, nom, mdp FROM artiste', function (err, rows) {
-            if (err) return reject(err)
-            return resolve(rows);
-        })
-    })
-}
-
-function setUser(nom, mdp) {
-    return new Promise((resolve, reject) => {
-        sql.query(`INSERT INTO artiste(nom, mdp) VALUES ('${nom}','${hash(mdp.toString())}')`, function (err, rows) {
-            if (err) return reject(err);
-            return resolve(rows);
         })
     })
 }

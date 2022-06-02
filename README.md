@@ -5,7 +5,7 @@ Capchat Projet
 ```
 npm install
 ```
-## Migration de la base de données
+## Migration de la base de données (ne fonctionne pas avec MAMP)
 ```
 npm run migration
 ```
