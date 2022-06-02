@@ -1,17 +1,19 @@
 <template>
     <div>
-        <!-- <div class="mx-auto" style="width: 800px;">
-            <div class="row g-2" v-for="capchat in capchats" :key="capchat.ordre">
-                <div class="col-sm">
-                    <div class="p-3 border bg-ligh">
-                        salut
+        <div class="container">
+            <div>
+                <button @click="getCapchat()">refresh</button>
+                <div class="row align-items-start">
+                    <div class="col-sm" v-for="capchat in capchats" :key="capchat.ordre">
+                        <img style="width: 150px; height: auto;" :src="'data:' + capchat.format + ';base64, ' + capchat.img" :alt="capchat.ordre" />
+                        <div v-if="capchat.ImageSinguliere">
+                            {{capchat.TexteQuestion}}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div> -->
-        <section>
-            <p>Et voici un paragraphe !</p>
-        </section>
+
+        </div>
     </div>
 </template>
 
@@ -49,23 +51,7 @@ export default {
 </script>
 
 <style scoped>
-body {
-  background: beige;
+.container {
+    max-width: 600px;
 }
-
-section {
-  display: block;
-  width: 400px;
-  height: 160px;
-  background: lightgray;
-}
-
-p {
-  width: 50%;   /* == 400px * .5 = 200px */
-  height: 25%;  /* == 160px * .25 = 40px */
-  margin: 5%;   /* == 400px * .05 = 20px */
-  padding: 5%;  /* == 400px * .05 = 20px */
-  background: cyan;
-}
-
 </style>
