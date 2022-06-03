@@ -1,20 +1,21 @@
 <template>
     <div>
         <div class="container">
-            <div>
-                <button @click="getCapchat()">refresh</button>
-                <br>
-                <div class="text-center ">
-                    <h4>{{indice}}</h4>
-                </div>
-                <div class="row align-items-start">
-                    <div class="col-sm" v-for="capchat in capchats" :key="capchat.ordre">
-                        <img :id="capchat.ordre" @click="setReponse(capchat)" style="width: 150px; height: 150px;"
-                            :src="'data:' + capchat.format + ';base64, ' + capchat.img" :alt="capchat.ordre" />
-                    </div>
+            <button @click="getCapchat()">refresh</button>
+            <br>
+            <div class="text-center ">
+                <h4>{{indice}}</h4>
+            </div>
+            <div class="row align-items-start">
+                <div class="col-sm" v-for="capchat in capchats" :key="capchat.ordre">
+                    <img :id="capchat.ordre" @click="setReponse(capchat)" style="width: 150px; height: 150px;"
+                        :src="'data:' + capchat.format + ';base64, ' + capchat.img" :alt="capchat.ordre" />
                 </div>
             </div>
-
+            <br>
+            <div class="text-center" v-if="reponseBool">
+                <h4>gg</h4>
+            </div>
         </div>
     </div>
 </template>
@@ -27,7 +28,8 @@ export default {
         return {
             idJeu: 23,
             capchats: null,
-            indice: null
+            indice: null,
+            reponseBool: null
         }
     },
     created() {
@@ -36,7 +38,10 @@ export default {
     methods: {
         setReponse(capchat) {
             if (capchat.ImageSinguliere) {
-                console.log("Win !!!!!");
+                this.reponseBool = true;
+            }
+            else {
+                this.reponseBool = false;
             }
         },
         getCapchat() {
