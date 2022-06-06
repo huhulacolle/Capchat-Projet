@@ -150,11 +150,38 @@ app.get('/api/getArtistes', authenticateToken, async function(req, res) {
 
 })
 
+app.delete('/api/deleteArtiste/:id', authenticateToken, async function(req, res) {
+    const decoded = getIdUser(req);
+    if (!decoded.admin) {
+        return res.status(403).end();
+    }
+    await deleteArtiste(req.params.id)
+    .then(
+        () => {
+            res.end();
+        }
+    )
+    .catch(
+        err => {
+            res.status(400).json(err);
+        }
+    )
+})
+
 function getArtistes() {
     return new Promise((resolve, reject) => {
-        sql.query(`SELECT * FROM artiste ORDER BY id DESC`, function(err, rows) {
+        sql.query(`SELECT * FROM artiste WHERE admin = 0 ORDER BY id DESC`, function(err, rows) {
             if (err) return reject(err);
             return resolve(rows);
+        })
+    })
+}
+
+function deleteArtiste(id) {
+    return new Promise((resolve, reject) => {
+        sql.query(`DELETE FROM artiste WHERE id = ${id} AND admin = 0`, function(err) {
+            if (err) return reject(err);
+            return resolve();
         })
     })
 }
