@@ -13,6 +13,9 @@
                                 <p class="card-text">
                                     Theme : {{data.theme}}
                                 </p>
+                                <p class="card-text h5">
+                                    Artiste : {{data.nom}}
+                                </p>
                                 <br>
                                 <a @click="getDessinComponents(data.id, data.jeu)" class="card-link">Selectionner</a>
                                 <a @click="deleteJeu(data.id)" class="card-link link-danger">Supprimer</a>    
@@ -26,7 +29,7 @@
                 <button @click="quitDessinComponents()" class="btn btn-dark">&laquo; Précédents</button>
                 <h1 class="text-center"> {{dessinComposentNom}} </h1> 
                 <br>
-                <!-- <Dessin :id=dessinComposent /> -->
+                <DessinAdmin :id=dessinComposent />
             </div>
         </transition>
 
@@ -34,6 +37,7 @@
 </template>
 <script>
 import axios from 'axios'
+import DessinAdmin from '@/components/Admin/DessinAdmin.vue'
 
 export default {
     data() {
@@ -45,6 +49,9 @@ export default {
             dessinComposent: null,
             dessinComposentNom: null
         }
+    },
+    components: {
+        DessinAdmin
     },
     created() {
         this.getJeu();
@@ -63,6 +70,16 @@ export default {
                 }
             )
         },
+        getDessinComponents(id, nom) {
+            this.dessinComposent = id;
+            this.dessinComposentNom = nom
+            this.dessin = true;
+        },
+        quitDessinComponents() {
+            this.dessinComposent = null;
+            this.dessinComposentNom = null;
+            this.dessin = false;
+        },
         deleteJeu(id) {
             axios.delete(`deleteJeu/${id}`)
             .then(
@@ -79,3 +96,30 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.animate__animated{
+  --animate-duration: 0.5s;
+}
+
+.card {
+    margin: 0 auto;
+    float: none;
+    margin-bottom: 10px;
+}
+
+.card-link {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.link-primary {
+    padding: 0;
+    border: none;
+    background: none;
+}
+
+.card-link:hover {
+    text-decoration: underline;
+}
+</style>

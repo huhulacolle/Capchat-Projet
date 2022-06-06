@@ -34,7 +34,7 @@
                     <ListeJeuAdmin/>
                 </div>
                 <div v-else-if="menuSelect == 'les Artistes'">
-                    <ListeJeuAdmin />
+                    <Artiste />
                 </div>
         </div>
     </div>
@@ -45,6 +45,7 @@ import NavBarUser from '@/components/NavBarUser.vue'
 import Capchat from '@/components/User/Capchat.vue'
 import ListeJeu from '@/components/User/ListeJeu.vue'
 import ListeJeuAdmin from '@/components/Admin/ListeJeuAdmin.vue'
+import Artiste from '@/components/Admin/Artiste.vue'
 import axios from 'axios'
 import TestCapchat from '@/components/User/TestCapchat.vue'
 
@@ -78,6 +79,7 @@ export default {
         Capchat,
         ListeJeu,
         ListeJeuAdmin,
+        Artiste,
         TestCapchat
     },
     methods: {

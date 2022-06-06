@@ -131,6 +131,34 @@ function setUser(nom, mdp) {
     })
 }
 
+app.get('/api/getArtistes', authenticateToken, async function(req, res) {
+    const decoded = getIdUser(req);
+    if (!decoded.admin) {
+        return res.status(403).end();
+    }
+    await getArtistes()
+    .then(
+        data => {
+            return res.json(data);
+        }
+    )
+    .catch(
+        err => {
+            return res.status(400).json(err);
+        }
+    )
+
+})
+
+function getArtistes() {
+    return new Promise((resolve, reject) => {
+        sql.query(`SELECT * FROM artiste ORDER BY id DESC`, function(err, rows) {
+            if (err) return reject(err);
+            return resolve(rows);
+        })
+    })
+}
+
 app.get('/api/Capchat/:idJeu', authenticateToken, async function(req, res) {
     await getCapchat(req.params.idJeu)
     .then(
@@ -246,8 +274,9 @@ function getJeu(id, admin) {
         }
         else {
             sql.query(
-                `SELECT jeu.id AS id, jeu.nom AS jeu, theme.nom AS theme
+                `SELECT jeu.id AS id, jeu.nom AS jeu, theme.nom AS theme, artiste.nom AS nom
                 FROM jeu 
+                INNER JOIN artiste ON jeu.IdArtiste = artiste.id
                 INNER JOIN theme ON jeu.IdTheme = theme.id 
                 ORDER BY jeu.id DESC`,
                 function (err, rows) {
@@ -259,34 +288,8 @@ function getJeu(id, admin) {
     })
 }
 
-
-app.get('/api/themes', authenticateToken, async function(req, res) {
-    await getThemes()
-    .then(
-        data => {
-            return res.json(data);
-        }
-    )
-    .catch(
-        err => {
-            return res.status(400).json(err);
-        }
-    )
-})
-
-function getThemes() {
-    return new Promise((resolve, reject) => {
-        sql.query('SELECT * FROM theme', function(err, rows) {
-            if (err) reject(err);
-            return resolve(rows);
-        })
-    })
-}
-
-
 app.get('/api/getDessin/:idJeu', authenticateToken, async function(req, res) {
-    const decoded = getIdUser(req);
-    await getDessin(req.params.idJeu, decoded.id)
+    await getDessin(req.params.idJeu)
     .then(
         data => {
             const reponse = convertBuffObjectToString(data);
@@ -332,12 +335,11 @@ app.delete('/api/deleteDessin/:id', authenticateToken, async function(req, res) 
     )
 })
 
-function getDessin(idJeu, idArtiste) {
+function getDessin(idJeu) {
     return new Promise((resolve, reject) => {
         sql.query(`
             SELECT image.id AS id, img, format, TexteQuestion, ImageSinguliere, IdJeu FROM image 
             INNER JOIN jeu ON image.IdJeu = jeu.id
-            WHERE jeu.IdArtiste = ${idArtiste}
             AND IdJeu = ${idJeu}
             ORDER BY image.id DESC
         `, function(err, rows) {
@@ -369,6 +371,30 @@ function deleteDessin(id) {
         })
     })
 }
+
+app.get('/api/themes', authenticateToken, async function(req, res) {
+    await getThemes()
+    .then(
+        data => {
+            return res.json(data);
+        }
+    )
+    .catch(
+        err => {
+            return res.status(400).json(err);
+        }
+    )
+})
+
+function getThemes() {
+    return new Promise((resolve, reject) => {
+        sql.query('SELECT * FROM theme', function(err, rows) {
+            if (err) reject(err);
+            return resolve(rows);
+        })
+    })
+}
+
 
 app.post('/api/testsendimg', authenticateToken, async function(req, res) {
     if (!req.files) {
