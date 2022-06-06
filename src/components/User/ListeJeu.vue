@@ -57,7 +57,7 @@
 
 <script>
 import axios from 'axios'
-import Dessin from '@/components/Dessin.vue'
+import Dessin from '@/components/User/Dessin.vue'
 
 export default {
     data() {

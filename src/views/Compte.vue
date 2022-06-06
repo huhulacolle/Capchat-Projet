@@ -2,36 +2,51 @@
     <div>
         <NavBarUser :nom=nom />
         <br>
-        <ul class="nav nav-pills justify-content-center">
+        <ul v-if="!admin" class="nav nav-pills justify-content-center">
             <li class="nav-item" v-for="menu in menus" :key="menu">
                 <a class="nav-link" @click="changeMenu(menu)"
                     v-bind:class="{ 'active': menuSelect == menu }">{{menu}}</a>
             </li>
         </ul>
+        <ul v-if="admin" class="nav nav-pills justify-content-center">
+            <li class="nav-item" v-for="menu in menusAdmin" :key="menu">
+                <a class="nav-link" @click="changeMenu(menu)"
+                    v-bind:class="{ 'active': menuSelect == menu }">{{menu}}</a>
+            </li>
+        </ul>        
         <br>
-        <div>
+        <div v-if="!admin">
             <transition :enter-active-class="enter"
                 :leave-active-class="leave" mode="out-in">
                 <div v-if="menuSelect == 'ton Capchat'">
                     <Capchat />
                 </div>
                 <div v-else-if="menuSelect == 'Tes jeux / Dessins'">
-                    <Dessin/>
+                    <ListeJeu/>
                 </div>
                 <div v-else-if="menuSelect == 'test Capchat'">
                     <TestCapchat />
                 </div>
             </transition>
         </div>
+        <div v-else>
+                <div v-if="menuSelect == 'Les jeux / Dessins'">
+                    <ListeJeuAdmin/>
+                </div>
+                <div v-else-if="menuSelect == 'les Artistes'">
+                    <ListeJeuAdmin />
+                </div>
+        </div>
     </div>
 </template>
 
 <script>
 import NavBarUser from '@/components/NavBarUser.vue'
-import Capchat from '@/components/Capchat.vue'
-import Dessin from '@/components/ListeJeu.vue'
+import Capchat from '@/components/User/Capchat.vue'
+import ListeJeu from '@/components/User/ListeJeu.vue'
+import ListeJeuAdmin from '@/components/Admin/ListeJeuAdmin.vue'
 import axios from 'axios'
-import TestCapchat from '@/components/TestCapchat.vue'
+import TestCapchat from '@/components/User/TestCapchat.vue'
 
 export default {
     data() {
@@ -40,10 +55,15 @@ export default {
             leave: null,
             id: null,
             nom: null,
+            admin: null,
             menus: [
                 "ton Capchat",
                 "Tes jeux / Dessins",
                 "test Capchat"
+            ],
+            menusAdmin: [
+                "Les jeux / Dessins",
+                "les Artistes"
             ],
             menuSelect: null
         }
@@ -56,7 +76,8 @@ export default {
     components: {
         NavBarUser,
         Capchat,
-        Dessin,
+        ListeJeu,
+        ListeJeuAdmin,
         TestCapchat
     },
     methods: {
@@ -67,6 +88,10 @@ export default {
                 data => {
                     this.id = data.data.content.id;
                     this.nom = data.data.content.username
+                    this.admin = data.data.content.admin
+                    if (this.admin) {
+                        this.menuSelect = this.menusAdmin[0];
+                    }
                 }
             )
             .catch(
@@ -78,10 +103,9 @@ export default {
             )
         },
         changeMenu(select) {
-            let oldMenuSelectIndex = this.menus.find(m => m == this.menuSelect)
+            let oldMenuSelectIndex = this.menus.find(m => m == this.menuSelect);
             oldMenuSelectIndex = this.menus.indexOf(oldMenuSelectIndex);
-            
-            this.menuSelect = select
+            this.menuSelect = select;
             this.animationConfig(oldMenuSelectIndex);
         },
         animationConfig(oldMenuSelectIndex) {

@@ -62,7 +62,7 @@ app.post('/api/connexion', async function(req, res) {
             message: `le nom d'utilisateur ou le mot de passe sont incorrect`
         })
     }
-    const token = jwt.sign({id: user.id, username: req.body.username }, process.env.SECRET_TOKEN, { expiresIn: '12h' });
+    const token = jwt.sign({id: user.id, username: req.body.username, admin: user.admin }, process.env.SECRET_TOKEN, { expiresIn: '12h' });
     return res.send({ token: token })
 })
 
@@ -78,7 +78,7 @@ app.post('/api/inscription', async function(req, res) {
     await setUser(req.body.username, req.body.password)
         .then(
             data => {
-                const token = jwt.sign({id: data.insertId ,username: req.body.username }, process.env.SECRET_TOKEN, { expiresIn: '12h' });
+                const token = jwt.sign({id: data.insertId ,username: req.body.username, admin: 0 }, process.env.SECRET_TOKEN, { expiresIn: '12h' });
                 res.send({
                     message: `Le compte ${req.body.username} à été créé avec succès`,
                     token: token
@@ -115,7 +115,7 @@ function getIdUser(req) {
 
 function getUsers() {
     return new Promise((resolve, reject) => {
-        sql.query('SELECT id, nom, mdp FROM artiste', function (err, rows) {
+        sql.query('SELECT id, nom, mdp, admin FROM artiste', function (err, rows) {
             if (err) return reject(err)
             return resolve(rows);
         })
@@ -167,7 +167,7 @@ function getCapchat(idJeu) {
 
 app.get('/api/getJeu', authenticateToken, async function(req, res) {
     const decoded = getIdUser(req);
-    await getJeu(decoded.id)
+    await getJeu(decoded.id, decoded.admin)
     .then(
         data => {
             return res.json(data)
@@ -230,18 +230,32 @@ function deleteJeu(id) {
     })
 }
 
-function getJeu(id) {
+function getJeu(id, admin) {
     return new Promise((resolve, reject) => {
-        sql.query(
-            `SELECT jeu.id AS id, jeu.nom AS jeu, theme.nom AS theme
-            FROM jeu 
-            INNER JOIN theme ON jeu.IdTheme = theme.id 
-            WHERE jeu.IdArtiste = ${id} 
-            ORDER BY jeu.id DESC`
-        , function(err, rows) {
-            if (err) return reject(err);
-            return resolve(rows);
-        })
+        if (!admin) {
+            sql.query(
+                `SELECT jeu.id AS id, jeu.nom AS jeu, theme.nom AS theme
+                FROM jeu 
+                INNER JOIN theme ON jeu.IdTheme = theme.id 
+                WHERE jeu.IdArtiste = ${id} 
+                ORDER BY jeu.id DESC`,
+                function (err, rows) {
+                    if (err) return reject(err);
+                    return resolve(rows);
+                })
+        }
+        else {
+            sql.query(
+                `SELECT jeu.id AS id, jeu.nom AS jeu, theme.nom AS theme
+                FROM jeu 
+                INNER JOIN theme ON jeu.IdTheme = theme.id 
+                ORDER BY jeu.id DESC`,
+                function (err, rows) {
+                    if (err) return reject(err);
+                    return resolve(rows);
+                })
+        }
+
     })
 }
 
