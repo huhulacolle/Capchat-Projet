@@ -38,7 +38,6 @@ export default {
             idJeu: null,
             url: "http://localhost:8080/Capchat/",
             link: null,
-            value: null,
             erreur: false,
             copie: false
         }
@@ -64,8 +63,7 @@ export default {
             this.idJeu = document.getElementById('idJeu').value;
         },
         copy() {
-            console.log(this.value == null);
-            if (!this.link && this.value == null) {
+            if (!this.link && !this.value) {
                 console.log("t'es con ?");
                 this.copie = false;
                 this.erreur = true;
