@@ -13,41 +13,36 @@
                 <a class="nav-link" @click="changeMenu(menu)"
                     v-bind:class="{ 'active': menuSelect == menu }">{{menu}}</a>
             </li>
-        </ul>        
+        </ul>
         <br>
         <div v-if="!admin">
-            <transition :enter-active-class="enter"
-                :leave-active-class="leave" mode="out-in">
+            <transition :enter-active-class="enter" :leave-active-class="leave" mode="out-in">
                 <div v-if="menuSelect == 'ton Capchat'">
-                    <Capchat />
+                    <Home />
                 </div>
                 <div v-else-if="menuSelect == 'Tes jeux / Dessins'">
-                    <ListeJeu/>
-                </div>
-                <div v-else-if="menuSelect == 'test Capchat'">
-                    <TestCapchat />
+                    <ListeJeu />
                 </div>
             </transition>
         </div>
         <div v-else>
-                <div v-if="menuSelect == 'Les jeux / Dessins'">
-                    <ListeJeuAdmin/>
-                </div>
-                <div v-else-if="menuSelect == 'les Artistes'">
-                    <Artiste />
-                </div>
+            <div v-if="menuSelect == 'Les jeux / Dessins'">
+                <ListeJeuAdmin />
+            </div>
+            <div v-else-if="menuSelect == 'les Artistes'">
+                <Artiste />
+            </div>
         </div>
     </div>
 </template>
 
 <script>
 import NavBarUser from '@/components/NavBarUser.vue'
-import Capchat from '@/components/User/Capchat.vue'
+import Home from '@/views/Capchat.vue'
 import ListeJeu from '@/components/User/ListeJeu.vue'
 import ListeJeuAdmin from '@/components/Admin/ListeJeuAdmin.vue'
 import Artiste from '@/components/Admin/Artiste.vue'
 import axios from 'axios'
-import TestCapchat from '@/components/User/TestCapchat.vue'
 
 export default {
     data() {
@@ -60,7 +55,6 @@ export default {
             menus: [
                 "ton Capchat",
                 "Tes jeux / Dessins",
-                "test Capchat"
             ],
             menusAdmin: [
                 "Les jeux / Dessins",
@@ -75,12 +69,11 @@ export default {
         this.user();
     },
     components: {
+        Home,
         NavBarUser,
-        Capchat,
         ListeJeu,
         ListeJeuAdmin,
-        Artiste,
-        TestCapchat
+        Artiste
     },
     methods: {
         user() {

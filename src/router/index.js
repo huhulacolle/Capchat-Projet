@@ -3,6 +3,7 @@ import Index from '@/views/Index.vue'
 // import IndexTest from '@/views/IndexTest.vue'
 import testcompte from '@/views/testcompte.vue'
 import Compte from '@/views/Compte.vue'
+import Capchat from '@/views/Capchat.vue'
 
 const routes = [
   {
@@ -19,6 +20,11 @@ const routes = [
     path: '/MonCompte',
     name: 'Compte', 
     component: Compte
+  },
+  {
+    path: '/Capchat/',
+    name: 'Capchat',
+    component: Capchat
   }
 ]
 
