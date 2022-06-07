@@ -186,7 +186,7 @@ function deleteArtiste(id) {
     })
 }
 
-app.get('/api/Capchat/:idJeu', authenticateToken, async function(req, res) {
+app.get('/api/Capchat/:idJeu', async function(req, res) {
     await getCapchat(req.params.idJeu)
     .then(
         data => {
@@ -219,6 +219,20 @@ function getCapchat(idJeu) {
     })
 }
 
+app.get('/api/getListJeu', authenticateToken, async function(req, res) {
+    const decoded = getIdUser(req);
+    await getListJeu(decoded.id)
+    .then(
+        data => {
+            res.json(data)
+        }
+    )
+    .catch(
+        err => {
+            res.status(400).json(err);
+        }
+    )
+})
 
 app.get('/api/getJeu', authenticateToken, async function(req, res) {
     const decoded = getIdUser(req);
@@ -264,23 +278,11 @@ app.delete('/api/deleteJeu/:id', authenticateToken, async function(req, res) {
     )
 })
 
-function setJeu(nom, artiste, theme) {
+function getListJeu(id) {
     return new Promise((resolve, reject) => {
-        const token = crypto.randomBytes(8).toString('hex');
-        sql.query(`INSERT INTO jeu (nom, token, idArtiste, idTheme) VALUES ('${nom}', '${token}', ${artiste}, ${theme})`, function(err) {
+        sql.query(`SELECT id, nom FROM jeu WHERE idArtiste = ${id}`, function(err, rows) {
             if (err) return reject(err);
-            return resolve();
-        })
-    })
-}
-
-function deleteJeu(id) {
-    return new Promise((resolve, reject) => {
-        sql.query(`
-        DELETE FROM image WHERE idJeu = ${id};
-        DELETE FROM jeu WHERE jeu.id = ${id};`, function(err) {
-            if (err) return reject(err);
-            return resolve();
+            return resolve(rows);
         })
     })
 }
@@ -312,6 +314,26 @@ function getJeu(id, admin) {
                 })
         }
 
+    })
+}
+
+function setJeu(nom, artiste, theme) {
+    return new Promise((resolve, reject) => {
+        sql.query(`INSERT INTO jeu (nom, idArtiste, idTheme) VALUES ('${nom}', ${artiste}, ${theme})`, function(err) {
+            if (err) return reject(err);
+            return resolve();
+        })
+    })
+}
+
+function deleteJeu(id) {
+    return new Promise((resolve, reject) => {
+        sql.query(`
+        DELETE FROM image WHERE idJeu = ${id};
+        DELETE FROM jeu WHERE jeu.id = ${id};`, function(err) {
+            if (err) return reject(err);
+            return resolve();
+        })
     })
 }
 

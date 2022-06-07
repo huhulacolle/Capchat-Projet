@@ -3,20 +3,82 @@
         <div class="container">
             <div class="row align-items-start">
                 <div class="col">
-                    <select id="" class="form-control" required>
+                    <select id="idJeu" class="form-control" required>
                         <option disabled selected hidden>Choisir jeu</option>
+                        <option v-for="jeu in listJeu" :key="jeu" :value="jeu.id" @click="setJeu()"> {{jeu.nom}}
+                        </option>
                     </select>
                     <br>
-                    <input type="text" class="form-control" placeholder="Lien">
+                    <input type="text" class="form-control" v-model="link" placeholder="Lien">
                 </div>
-                <!-- <div class="col">
-                    <iframe src="http://localhost:8080/Capchat?idJeu=23" width="600" height="700" />
-                </div> -->
                 <div class="col">
-                    One of three columns
+                    <input type="text" id="link" class="form-control" @click="copy()"
+                        :value="`<iframe src='${this.url}?idJeu=${this.idJeu}&link=${this.link}' width='600' height='700'></iframe>`"
+                        readonly>
+                    <br>
+                    <div v-if="erreur" class="alert alert-danger animate__animated animate__bounceIn" role="alert">
+                        t'es con ?
+                    </div>
+                    <div v-if="copie" class="alert alert-success animate__animated animate__bounceIn" role="alert">
+                        Balise html Copié dans le presse-papier
+                    </div>
                 </div>
             </div>
-            <!-- <iframe src="http://localhost:8080/Capchat/" width="600" height="700" /> -->
         </div>
     </div>
 </template>
+
+<script>
+import axios from 'axios'
+
+export default {
+    data() {
+        return {
+            listJeu: null,
+            idJeu: null,
+            url: "http://localhost:8080/Capchat/",
+            link: null,
+            value: null,
+            erreur: false,
+            copie: false
+        }
+    },
+    created() {
+    this.getListJeu();
+    },
+    methods: {
+        getListJeu() {
+            axios.get('getListJeu')
+                .then(
+                    data => {
+                        this.listJeu = data.data
+                    }
+                )
+                .catch(
+                    err => {
+                        console.error(err);
+                    }
+                )
+        },
+        setJeu() {
+            this.idJeu = document.getElementById('idJeu').value;
+        },
+        copy() {
+            console.log(this.value == null);
+            if (!this.link && this.value == null) {
+                console.log("t'es con ?");
+                this.copie = false;
+                this.erreur = true;
+            }
+            else {
+                navigator.clipboard.writeText(document.getElementById('link').value);
+                this.erreur = false;
+                this.copie = true;
+                setTimeout(() => {
+                    this.copie = false;
+                }, 8000);
+            }
+        }
+    }
+}
+</script>

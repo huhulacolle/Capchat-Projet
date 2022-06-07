@@ -24,6 +24,7 @@
                 </div>
                 <div class="col">
                     <h4>Capchat Ch'est fait 👌</h4>
+                    <h5><a :href="$route.query.link" target="_blank"> {{$route.query.link}} </a></h5>
                 </div>
                 <div class="col">
                     <img src="@/assets/bird.gif" class="capchat"
@@ -47,12 +48,12 @@ export default {
             capchats: null,
             indice: null,
             reponseBool: false,
-            erreur: false
+            erreur: false,
+            link: null,
         }
     },
     created() {
         this.getCapchat();
-        console.log(this.$route.query);
     },
     methods: {
         setReponse(capchat) {
@@ -71,7 +72,6 @@ export default {
         getCapchat() {
             this.erreur = false;
             this.reponseBool = false;
-            axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
             axios.get(`Capchat/${this.$route.query.idJeu}`)
                 .then(
                     data => {
