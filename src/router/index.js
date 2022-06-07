@@ -22,7 +22,7 @@ const routes = [
     component: Compte
   },
   {
-    path: '/Capchat/',
+    path: '/capchat/',
     name: 'Capchat',
     component: Capchat
   }

@@ -38,7 +38,7 @@
 
 <script>
 import NavBarUser from '@/components/NavBarUser.vue'
-import Home from '@/views/Capchat.vue'
+import Home from '@/components/User/Home.vue'
 import ListeJeu from '@/components/User/ListeJeu.vue'
 import ListeJeuAdmin from '@/components/Admin/ListeJeuAdmin.vue'
 import Artiste from '@/components/Admin/Artiste.vue'

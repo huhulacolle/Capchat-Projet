@@ -23,7 +23,7 @@
                     <img src="@/assets/bird.gif" alt="gg" style="width: 100px; height: 100px;">
                 </div>
                 <div class="col">
-                    <h4>Capchat Chest fait 👌</h4>
+                    <h4>Capchat Ch'est fait 👌</h4>
                 </div>
                 <div class="col">
                     <img src="@/assets/bird.gif" class="capchat"
@@ -44,7 +44,6 @@ export default {
     data() {
         return {
             loading: true,
-            idJeu: 23,
             capchats: null,
             indice: null,
             reponseBool: false,
@@ -53,6 +52,7 @@ export default {
     },
     created() {
         this.getCapchat();
+        console.log(this.$route.query);
     },
     methods: {
         setReponse(capchat) {
@@ -72,7 +72,7 @@ export default {
             this.erreur = false;
             this.reponseBool = false;
             axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
-            axios.get(`Capchat/${this.idJeu}`)
+            axios.get(`Capchat/${this.$route.query.idJeu}`)
                 .then(
                     data => {
                         this.loading = false;
