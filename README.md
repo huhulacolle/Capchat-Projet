@@ -5,9 +5,14 @@ Capchat Projet
 ```
 npm install
 ```
+## Création automatique du fichier .env
+```
+node env.js
+```
+<br>
 ## Migration de la base de données (ne fonctionne pas avec MAMP)
 ```
-npm run migration
+node migration.js
 ```
 <br>
 
