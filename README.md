@@ -9,7 +9,6 @@ npm install
 ```
 node env.js
 ```
-<br>
 ## Migration de la base de données (ne fonctionne pas avec MAMP)
 ```
 node migration.js
