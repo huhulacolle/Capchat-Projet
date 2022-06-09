@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : lun. 30 mai 2022 à 08:26
+-- Généré le : jeu. 09 juin 2022 à 16:59
 -- Version du serveur : 8.0.27
 -- Version de PHP : 8.1.6
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de données : `capchat`
+-- Base de données : `capchat_backup`
 --
 
 -- --------------------------------------------------------
@@ -32,8 +32,9 @@ CREATE TABLE IF NOT EXISTS `artiste` (
   `id` int NOT NULL AUTO_INCREMENT,
   `nom` varchar(25) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `mdp` varchar(999) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `admin` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
 
@@ -51,7 +52,7 @@ CREATE TABLE IF NOT EXISTS `image` (
   `IdJeu` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_JEU` (`IdJeu`)
-) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
 
@@ -63,13 +64,12 @@ DROP TABLE IF EXISTS `jeu`;
 CREATE TABLE IF NOT EXISTS `jeu` (
   `id` int NOT NULL AUTO_INCREMENT,
   `nom` varchar(25) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `Token` varchar(999) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `IdArtiste` int DEFAULT NULL,
   `IdTheme` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_ARTISTE` (`IdArtiste`),
   KEY `FK_THEME` (`IdTheme`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
 

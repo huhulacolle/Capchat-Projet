@@ -9,9 +9,13 @@ npm install
 ```
 node env.js
 ```
-## Migration de la base de données (ne fonctionne pas avec MAMP)
+## Emplacement du script pour l'installation de la base de données en local
 ```
-node migration.js
+../capchat-projet/SQL/capchat.sql
+```
+## Crée le compte Admin (mot de passe : 123) 
+```
+node CreateAdmin.js
 ```
 <br>
 
