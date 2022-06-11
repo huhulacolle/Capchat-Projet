@@ -5,6 +5,7 @@ const fileUpload = require('express-fileupload')
 const port = 3000
 var mysql = require('mysql');
 const crypto = require('crypto');
+var AdmZip = require("adm-zip");
 require('dotenv').config();
 
 var app = express();
@@ -382,6 +383,14 @@ app.delete('/api/deleteDessin/:id', authenticateToken, async function(req, res) 
             return res.status(400).json(err);
         }
     )
+})
+
+app.get('/api/downloadDessin', function(req, res) {
+    var zip = new AdmZip();
+    var content = "inner content of the file";
+    zip.addFile("test.txt", Buffer.from(content, "utf8"), "entry comment goes here");
+    var willSendthis = zip.toBuffer();
+    res.json(willSendthis)
 })
 
 function getDessin(idJeu) {
