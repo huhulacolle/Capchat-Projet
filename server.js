@@ -388,7 +388,7 @@ app.delete('/api/deleteDessin/:id', authenticateToken, async function(req, res) 
 app.get('/api/downloadDessin', function(req, res) {
     var zip = new AdmZip();
     var content = "inner content of the file";
-    zip.addFile("test.txt", Buffer.from(content, "utf8"), "entry comment goes here");
+    zip.addFile("test.txt", Buffer.from(content, "utf8"));
     var willSendthis = zip.toBuffer();
     res.json(willSendthis)
 })
