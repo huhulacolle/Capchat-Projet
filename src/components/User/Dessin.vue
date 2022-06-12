@@ -1,6 +1,13 @@
 <template>
     <div>
         <div class="container">
+            <div class="text-center">
+                <button class="btn btn-primary" @click="downloadDessin()">
+                    Télécharger
+                    <span v-if="loadingDL" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                </button>
+            </div>
+            <br>
             <div class="row">
                 <div class="col text-center">
                     <form @submit.prevent="sendingDessin()">
@@ -54,7 +61,8 @@ export default {
             imageSinguliereBool: false,
             indice: null,
             dessins: null,
-            loading: true
+            loading: true,
+            loadingDL: false
         }
     },
     created() {
@@ -63,17 +71,17 @@ export default {
     methods: {
         getDessin() {
             axios.get(`getDessin/${this.id}`)
-            .then(
-                data => {
-                    this.loading = false;
-                    this.dessins = data.data
-                }
-            )
-            .catch(
-                err => {
-                    console.error(err);
-                }
-            )
+                .then(
+                    data => {
+                        this.loading = false;
+                        this.dessins = data.data
+                    }
+                )
+                .catch(
+                    err => {
+                        console.error(err);
+                    }
+                )
         },
         sendingDessin() {
             let formData = new FormData();
@@ -83,37 +91,62 @@ export default {
             formData.append("imageSinguliere", this.imageSinguliereBool ? 1 : 0);
             formData.append("idJeu", this.id);
             axios.post('setDessin', formData, {
-                'Content-Type': 'multipart/form-data'
-            }
-            )
-            .then(
-                () => {
-                    this.getDessin();
-                }
-            )
-            .catch(
-                err => {
-                    console.error(err);
-                }
-            )
+                    'Content-Type': 'multipart/form-data'
+                })
+                .then(
+                    () => {
+                        this.getDessin();
+                    }
+                )
+                .catch(
+                    err => {
+                        console.error(err);
+                    }
+                )
         },
         deleteDessin(id) {
             axios.delete(`deleteDessin/${id}`)
-            .then(
-                () => {
-                    this.getDessin();
-                }
-            )
-            .catch(
-                err => {
-                    console.error(err);
-                }
-            )
+                .then(
+                    () => {
+                        this.getDessin();
+                    }
+                )
+                .catch(
+                    err => {
+                        console.error(err);
+                    }
+                )
         },
         radio() {
             if (this.imageSinguliereBool) {
                 this.indice = null;
             }
+        },
+        downloadDessin() {
+            this.loadingDL = true;
+            axios.get(`downloadDessin/${this.id}`, {
+                    responseType: 'arraybuffer',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/zip'
+                    }
+                })
+                .then(
+                    data => {
+                        const url = window.URL.createObjectURL(new Blob([data.data]));
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.setAttribute('download', 'file.zip');
+                        document.body.appendChild(link);
+                        this.loadingDL = false;
+                        link.click();
+                    }
+                )
+                .catch(
+                    err => {
+                        console.error(err);
+                    }
+                )
         }
     }
 }

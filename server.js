@@ -386,14 +386,20 @@ app.delete('/api/deleteDessin/:id', authenticateToken, async function(req, res) 
     )
 })
 
-app.get('/api/downloadDessin/:idJeu', async function(req, res) {
+app.get('/api/downloadDessin/:idJeu', authenticateToken, async function(req, res) {
     var zip = new AdmZip();
     const dessin = convertBuffObjectToString(await getDessin(req.params.idJeu));
     for (let i = 0; i < dessin.length; i++) {
         zip.addFile(i + "." + dessin[i].format.split('/')[1], Buffer.from(dessin[i].img, 'base64'))
     }
+    zip.writeZip('C:/Users/arauj/Downloads/test.zip')
     var willSendthis = zip.toBuffer();
-    res.json("c'est bon")
+    const fileName = req.params.idJeu + ".zip"
+    var savedFilePath = './temp/' + fileName; // in some convenient temporary file folder
+    fs.writeFile(savedFilePath, willSendthis, function(err) {
+        if (err) return res.status(400).json(err);
+        return res.download(savedFilePath, fileName);
+    });
 })
 
 function getDessin(idJeu) {
