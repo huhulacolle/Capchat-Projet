@@ -475,11 +475,34 @@ app.get('/api/themes', authenticateToken, async function(req, res) {
     )
 })
 
+app.put('/api/updateTheme', authenticateToken, async function(req, res) {
+    await updateTheme(req.body.id, req.body.nom)
+    .then(
+        () => {
+            res.end();
+        }
+    )
+    .catch(
+        err => {
+            res.status(400).json(err);
+        }
+    )
+})
+
 function getThemes() {
     return new Promise((resolve, reject) => {
         sql.query('SELECT * FROM theme', function(err, rows) {
             if (err) reject(err);
             return resolve(rows);
+        })
+    })
+}
+
+function updateTheme(id, nom) {
+    return new Promise((resolve, reject) => {
+        sql.query(`UPDATE theme SET nom = '${nom}' WHERE id = ${id}`, function(err) {
+            if (err) return reject(err)
+            return resolve();
         })
     })
 }

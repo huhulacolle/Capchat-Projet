@@ -32,6 +32,9 @@
             <div v-else-if="menuSelect == 'les Artistes'">
                 <Artiste />
             </div>
+            <div v-else-if="menuSelect == 'Themes'">
+                <Theme />
+            </div>
         </div>
     </div>
 </template>
@@ -42,6 +45,7 @@ import Home from '@/components/User/Home.vue'
 import ListeJeu from '@/components/User/ListeJeu.vue'
 import ListeJeuAdmin from '@/components/Admin/ListeJeuAdmin.vue'
 import Artiste from '@/components/Admin/Artiste.vue'
+import Theme from '@/components/Admin/Theme.vue'
 import axios from 'axios'
 
 export default {
@@ -58,7 +62,8 @@ export default {
             ],
             menusAdmin: [
                 "Les jeux / Dessins",
-                "les Artistes"
+                "les Artistes",
+                "Themes"
             ],
             menuSelect: null
         }
@@ -73,7 +78,8 @@ export default {
         NavBarUser,
         ListeJeu,
         ListeJeuAdmin,
-        Artiste
+        Artiste,
+        Theme
     },
     methods: {
         user() {
