@@ -500,7 +500,7 @@ function getThemes() {
 
 function updateTheme(id, nom) {
     return new Promise((resolve, reject) => {
-        sql.query(`UPDATE theme SET nom = '${nom}' WHERE id = ${id}`, function(err) {
+        sql.query(`UPDATE theme SET nom = '${nom}'  WHERE id = ${id}`, function(err) {
             if (err) return reject(err)
             return resolve();
         })

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <button @click="refresh()">refresh</button>
+        <button class="btn btn-primary" @click="refresh()"><i class="bi bi-arrow-counterclockwise"></i></button>
         <br>
         <div class="d-flex justify-content-center" v-if="loading">
             <div class="spinner-border text-primary" role="status">

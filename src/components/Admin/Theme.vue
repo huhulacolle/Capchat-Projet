@@ -8,7 +8,9 @@
                             <input type="text" class="form-control" :id="theme.id" :value="theme.nom">
                         </td>
                         <td>
-                            <a class="card-link link-primary" @click="modifier(theme.id)">Modifier</a>
+                            <a class="card-link link-primary" @click="modifier(theme.id)">
+                                Modifier
+                            </a>
                         </td>
                         <td>
                             <a class="card-link link-danger">Supprimer</a>
@@ -42,6 +44,8 @@ export default {
                 )
         },
         modifier(id) {
+            this.loadingDL = true;
+            this.success = false;
             const value = document.getElementById(id).value;
             axios.put('updateTheme', {
                 id: id,
@@ -49,7 +53,7 @@ export default {
             })
             .then(
                 () => {
-                    console.log("ça marche");
+                    alert("success")
                 }
             )
             .catch(
