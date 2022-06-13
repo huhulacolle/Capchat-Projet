@@ -489,6 +489,20 @@ app.put('/api/updateTheme', authenticateToken, async function(req, res) {
     )
 })
 
+app.delete('/api/deleteTheme/:id', authenticateToken, async function(req, res) {
+    await deleteTheme(req.params.id)
+    .then(
+        () => {
+            res.end();
+        }
+    )
+    .catch(
+        err => {
+            res.status(400).json(err);
+        }
+    )
+})
+
 function getThemes() {
     return new Promise((resolve, reject) => {
         sql.query('SELECT * FROM theme', function(err, rows) {
@@ -502,6 +516,15 @@ function updateTheme(id, nom) {
     return new Promise((resolve, reject) => {
         sql.query(`UPDATE theme SET nom = '${nom}'  WHERE id = ${id}`, function(err) {
             if (err) return reject(err)
+            return resolve();
+        })
+    })
+}
+
+function deleteTheme(id) {
+    return new Promise((resolve, reject) => {
+        sql.query(`DELETE FROM theme WHERE id = ${id}`, function(err) {
+            if (err) return reject(err);
             return resolve();
         })
     })

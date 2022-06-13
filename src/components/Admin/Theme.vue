@@ -13,7 +13,7 @@
                             </a>
                         </td>
                         <td>
-                            <a class="card-link link-danger">Supprimer</a>
+                            <a class="card-link link-danger" @click="supprimer(theme.id)">Supprimer</a>
                         </td>
                     </tr>
                 </tbody>
@@ -59,6 +59,19 @@ export default {
             .catch(
                 err => {
                     console.error(err);
+                }
+            )
+        },
+        supprimer(id) {
+            axios.delete(`deleteTheme/${id}`)
+            .then(
+                () => {
+                    this.getTheme();
+                }
+            )
+            .catch(
+                err => {
+                    alert(err.request.response)
                 }
             )
         }
