@@ -266,6 +266,20 @@ app.post('/api/sendJeu', authenticateToken, async function(req, res) {
     )
 })
 
+app.put('/api/updateThemeJeu', authenticateToken, async function(req, res) {
+    await updateThemeJeu(req.body.idJeu, req.body.idTheme)
+    .then(
+        () => {
+            res.end();
+        }
+    )
+    .catch(
+        err => {
+            res.status(400).json(err);
+        }
+    )
+})
+
 app.delete('/api/deleteJeu/:id', authenticateToken, async function(req, res) {
     await deleteJeu(req.params.id)
     .then(
@@ -323,6 +337,15 @@ function setJeu(nom, artiste, theme) {
     return new Promise((resolve, reject) => {
         sql.query(`INSERT INTO jeu (nom, idArtiste, idTheme) VALUES ('${nom}', ${artiste}, ${theme})`, function(err) {
             if (err) return reject(err);
+            return resolve();
+        })
+    })
+}
+
+function updateThemeJeu(idJeu, idTheme) {
+    return new Promise((resolve, reject) => {
+        sql.query(`UPDATE jeu SET IdTheme = ${idTheme} WHERE id = ${idJeu}`, function(err) {
+            if (err) return reject();
             return resolve();
         })
     })
@@ -392,7 +415,6 @@ app.get('/api/downloadDessin/:idJeu', authenticateToken, async function(req, res
     for (let i = 0; i < dessin.length; i++) {
         zip.addFile(i + "." + dessin[i].format.split('/')[1], Buffer.from(dessin[i].img, 'base64'))
     }
-    zip.writeZip('C:/Users/arauj/Downloads/test.zip')
     var willSendthis = zip.toBuffer();
     const fileName = req.params.idJeu + ".zip"
     var savedFilePath = './temp/' + fileName; // in some convenient temporary file folder
@@ -461,7 +483,6 @@ function getThemes() {
         })
     })
 }
-
 
 app.post('/api/testsendimg', authenticateToken, async function(req, res) {
     if (!req.files) {

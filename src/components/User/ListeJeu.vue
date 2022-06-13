@@ -16,7 +16,7 @@
                                     <br>
                                     <p class="card-text">
                                         <select class="form-control" id="theme" required>
-                                                <option value="" disabled selected hidden>Theme</option>
+                                            <option value="" disabled selected hidden>Theme</option>
                                             <option v-for="t in themeSelect" :key="t.id" :value=t.id>
                                                 {{t.nom}}
                                             </option>
@@ -32,12 +32,19 @@
                             <div class="card-body text-center">
                                 <h5 class="card-header" style="background-color: white"> {{data.jeu}} </h5>
                                 <br>
+                                Theme :
                                 <p class="card-text">
-                                    Theme : {{data.theme}}
+                                    <br>
+                                    <select class="form-control text-center" id="ThemeJeu">
+                                        <option v-for="t in themeSelect" :key="t.id" :value="t.id"
+                                            :selected="t.nom == data.theme" @click="updateThemeJeu(data.id, t.id)">
+                                            {{t.nom}}
+                                        </option>
+                                    </select>
                                 </p>
                                 <br>
                                 <a @click="getDessinComponents(data.id, data.jeu)" class="card-link">Selectionner</a>
-                                <a @click="deleteJeu(data.id)" class="card-link link-danger">Supprimer</a>    
+                                <a @click="deleteJeu(data.id)" class="card-link link-danger">Supprimer</a>
                                 <br><br>
                             </div>
                         </div>
@@ -46,7 +53,7 @@
             </div>
             <div class="container" v-else>
                 <button @click="quitDessinComponents()" class="btn btn-dark">&laquo; Précédents</button>
-                <h1 class="text-center"> {{dessinComposentNom}} </h1> 
+                <h1 class="text-center"> {{dessinComposentNom}} </h1>
                 <br>
                 <Dessin :id=dessinComposent />
             </div>
@@ -117,10 +124,19 @@ export default {
                         console.error(err.request);
                     }
                 )
-
             this.jeuInput = null;
         },
-        // eslint-disable-next-line no-unused-vars
+        updateThemeJeu(idJeu, idTheme) {
+            axios.put('updateThemeJeu', {
+                idJeu: idJeu,
+                idTheme: idTheme
+            })
+            .catch(
+                err => {
+                    console.error(err);
+                }
+            )
+        },
         getDessinComponents(id, nom) {
             this.dessinComposent = id;
             this.dessinComposentNom = nom
