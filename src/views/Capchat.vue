@@ -8,6 +8,7 @@
             </div>
         </div>
         <div class="text-center ">
+            <h4>{{time}}</h4>
             <h4>{{indice}}</h4>
         </div>
         <div class="row align-items-start">
@@ -50,18 +51,31 @@ export default {
             reponseBool: false,
             erreur: false,
             link: null,
+            time: 60,
+            timeout: null
         }
     },
     created() {
         this.getCapchat();
     },
     methods: {
+        timer() {
+            if (this.time > 0) {
+                this.timeout = setTimeout(() => {
+                    this.time--;
+                    this.timer();
+                }, 1000);
+            } else {
+                this.refresh();
+            }
+        },
         setReponse(capchat) {
             if (!this.reponseBool) {
                 if (capchat.ImageSinguliere) {
                     document.getElementById(capchat.ordre).style = "border: solid blue;"
                     this.erreur = false;
                     this.reponseBool = true;
+                    clearTimeout(this.timeout);
                 } else {
                     document.getElementById(capchat.ordre).style = "border: solid red;"
                     this.reponseBool = false;
@@ -77,6 +91,7 @@ export default {
                     data => {
                         this.loading = false;
                         this.capchats = data.data;
+                        this.timer();
                         this.capchats.forEach(capchat => {
                             if (document.getElementById(capchat.ordre)) {
                                 document.getElementById(capchat.ordre).style = "";
@@ -98,6 +113,7 @@ export default {
             this.indice = null;
             this.capchats = null;
             this.loading = true;
+            this.time = 60;
             this.getCapchat();
         }
     }
