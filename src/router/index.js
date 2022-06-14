@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Index from '@/views/Index.vue'
-// import IndexTest from '@/views/IndexTest.vue'
+// import IndexTest from '@/views/IndexTest.vue' Je ramène le petit dèj la semaine prochaine
 import testcompte from '@/views/testcompte.vue'
 import Compte from '@/views/Compte.vue'
 import Capchat from '@/views/Capchat.vue'
