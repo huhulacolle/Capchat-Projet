@@ -475,11 +475,11 @@ app.get('/api/themes', authenticateToken, async function(req, res) {
     )
 })
 
-app.put('/api/updateTheme', authenticateToken, async function(req, res) {
-    await updateTheme(req.body.id, req.body.nom)
+app.post('/api/setTheme', authenticateToken, async function(req, res) {
+    await setTheme(req.body.nom)
     .then(
         () => {
-            res.end();
+            return res.end();
         }
     )
     .catch(
@@ -489,16 +489,30 @@ app.put('/api/updateTheme', authenticateToken, async function(req, res) {
     )
 })
 
-app.delete('/api/deleteTheme/:id', authenticateToken, async function(req, res) {
-    await deleteTheme(req.params.id)
+app.put('/api/updateTheme', authenticateToken, async function(req, res) {
+    await updateTheme(req.body.id, req.body.nom)
     .then(
         () => {
-            res.end();
+            return res.end();
         }
     )
     .catch(
         err => {
-            res.status(400).json(err);
+            return res.status(400).json(err);
+        }
+    )
+})
+
+app.delete('/api/deleteTheme/:id', authenticateToken, async function(req, res) {
+    await deleteTheme(req.params.id)
+    .then(
+        () => {
+            return res.end();
+        }
+    )
+    .catch(
+        err => {
+            return res.status(400).json(err);
         }
     )
 })
@@ -508,6 +522,15 @@ function getThemes() {
         sql.query('SELECT * FROM theme', function(err, rows) {
             if (err) reject(err);
             return resolve(rows);
+        })
+    })
+}
+
+function setTheme(nom) {
+    return new Promise((resolve, reject) => {
+        sql.query(`INSERT INTO theme (nom) VALUES ('${nom}')`, function(err) {
+            if (err) return reject(err);
+            return resolve();
         })
     })
 }

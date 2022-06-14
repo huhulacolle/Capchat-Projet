@@ -3,6 +3,15 @@
         <div class="container">
             <table class="table">
                 <tbody>
+                    <tr>
+                        <td>
+                            <form @submit.prevent="setTheme()">
+                                <input type="text" class="form-control" v-model="nom" placeholder="Nom" required>
+                                
+                                <input type="submit" class="card-link link-primary" value="">
+                            </form>
+                        </td>
+                    </tr>
                     <tr v-for="theme in themes" :key="theme">
                         <td>
                             <input type="text" class="form-control" :id="theme.id" :value="theme.nom">
@@ -29,6 +38,7 @@ export default {
     data() {
         return {
             themes: null,
+            nom: null
         }
     },
     created() {
@@ -42,6 +52,21 @@ export default {
                         this.themes = data.data;
                     }
                 )
+        },
+        setTheme() {
+            axios.post('setTheme', {
+                nom: this.nom
+            })
+            .then(
+                () => {
+                    this.getTheme();
+                }
+            )
+            .catch(
+                err => {
+                    console.error(err);
+                }
+            )
         },
         modifier(id) {
             this.loadingDL = true;
@@ -85,6 +110,16 @@ a {
     text-decoration: none;
 }
 a:hover {
+    text-decoration: underline;
+}
+.link-primary {
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    text-decoration: none;
+}
+.link-primary:hover {
     text-decoration: underline;
 }
 </style>

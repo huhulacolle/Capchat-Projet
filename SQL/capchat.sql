@@ -79,17 +79,16 @@ CREATE TABLE IF NOT EXISTS `jeu` (
 
 DROP TABLE IF EXISTS `theme`;
 CREATE TABLE IF NOT EXISTS `theme` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `nom` varchar(999) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3;
 
 --
 -- Déchargement des données de la table `theme`
 --
 
 INSERT INTO `theme` (`id`, `nom`) VALUES
-(0, 'test'),
 (1, 'Animaux'),
 (2, 'Outils');
 
