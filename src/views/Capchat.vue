@@ -11,6 +11,9 @@
             <h4>{{time}}</h4>
             <h4>{{indice}}</h4>
         </div>
+        <div v-if="erreurBool" class="text-center h4 alert alert-danger">
+            {{erreurTexte}}
+        </div>
         <div class="row align-items-start">
             <div class="col-sm" v-for="capchat in capchats" :key="capchat.ordre">
                 <img :id="capchat.ordre" @click="setReponse(capchat)" class="capchat"
@@ -52,7 +55,9 @@ export default {
             erreur: false,
             link: null,
             time: 60,
-            timeout: null
+            timeout: null,
+            erreurBool: false,
+            erreurTexte: null
         }
     },
     created() {
@@ -78,6 +83,7 @@ export default {
                     clearTimeout(this.timeout);
                 } else {
                     document.getElementById(capchat.ordre).style = "border: solid red;"
+                    this.time -= 5
                     this.reponseBool = false;
                     this.erreur = true;
                 }
@@ -91,6 +97,7 @@ export default {
                     data => {
                         this.loading = false;
                         this.capchats = data.data;
+                        console.log(data.data);
                         this.timer();
                         this.capchats.forEach(capchat => {
                             if (document.getElementById(capchat.ordre)) {
@@ -105,6 +112,8 @@ export default {
                 )
                 .catch(
                     err => {
+                        this.erreurTexte = JSON.parse(err.request.response).erreur;
+                        this.erreurBool = true;
                         console.error(err);
                     }
                 )

@@ -192,10 +192,12 @@ app.get('/api/Capchat/:idJeu', async function(req, res) {
     await getCapchat(req.params.idJeu)
     .then(
         data => {
+            if ((data[0].length + data[1].length) < 9) {
+                return res.status(400).json({erreur: "Il manque des images singulières ou neutre dans le jeu"})
+            }
             const reponse = convertBuffObjectToString(data[0]);
             const imageSing = convertBuffObjectToString(data[1]);
             reponse[Math.floor(Math.random() * 8)] = imageSing[0];
-            
             for (let i = 0; i < reponse.length; i++) {
                 reponse[i].ordre = i + 1              
             }
