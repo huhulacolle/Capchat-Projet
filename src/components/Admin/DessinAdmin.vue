@@ -40,7 +40,7 @@ export default {
     },
     methods: {
         getDessin() {
-            axios.get(`getDessin/${this.id}`)
+            axios.get(`dessin/${this.id}`)
             .then(
                 data => {
                     this.loading = false;
@@ -60,7 +60,7 @@ export default {
             formData.append("texteQuestion", this.indice);
             formData.append("imageSinguliere", this.imageSinguliereBool ? 1 : 0);
             formData.append("idJeu", this.id);
-            axios.post('setDessin', formData, {
+            axios.post('dessin', formData, {
                 'Content-Type': 'multipart/form-data'
             }
             )
@@ -76,7 +76,7 @@ export default {
             )
         },
         deleteDessin(id) {
-            axios.delete(`deleteDessin/${id}`)
+            axios.delete(`dessin/${id}`)
             .then(
                 () => {
                     this.getDessin();

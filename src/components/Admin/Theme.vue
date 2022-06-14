@@ -46,7 +46,7 @@ export default {
     },
     methods: {
         getTheme() {
-            axios.get('themes')
+            axios.get('theme')
                 .then(
                     data => {
                         this.themes = data.data;
@@ -54,7 +54,7 @@ export default {
                 )
         },
         setTheme() {
-            axios.post('setTheme', {
+            axios.post('theme', {
                 nom: this.nom
             })
             .then(
@@ -72,7 +72,7 @@ export default {
             this.loadingDL = true;
             this.success = false;
             const value = document.getElementById(id).value;
-            axios.put('updateTheme', {
+            axios.put('theme', {
                 id: id,
                 nom: value
             })
@@ -88,7 +88,7 @@ export default {
             )
         },
         supprimer(id) {
-            axios.delete(`deleteTheme/${id}`)
+            axios.delete(`theme/${id}`)
             .then(
                 () => {
                     this.getTheme();

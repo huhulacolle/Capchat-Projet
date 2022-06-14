@@ -87,7 +87,7 @@ export default {
 
     methods: {
         getTheme() {
-            axios.get('themes')
+            axios.get('theme')
                 .then(
                     data => {
                         this.themeSelect = data.data;
@@ -95,7 +95,7 @@ export default {
                 )
         },
         getJeu() {
-            axios.get('getJeu')
+            axios.get('jeu')
                 .then(
                     data => {
                         this.tabJeux = data.data;
@@ -110,7 +110,7 @@ export default {
             this.jeuInput = null;
         },
         setJeu() {
-            axios.post('sendJeu', {
+            axios.post('jeu', {
                     nom: this.jeuInput,
                     theme: document.getElementById('theme').value
                 })
@@ -127,7 +127,7 @@ export default {
             this.jeuInput = null;
         },
         updateThemeJeu(idJeu, idTheme) {
-            axios.put('updateThemeJeu', {
+            axios.put('jeu', {
                 idJeu: idJeu,
                 idTheme: idTheme
             })
@@ -148,7 +148,7 @@ export default {
             this.dessin = false;
         },
         deleteJeu(id) {
-            axios.delete(`deleteJeu/${id}`)
+            axios.delete(`jeu/${id}`)
             .then(
                 () => {
                     this.getJeu();

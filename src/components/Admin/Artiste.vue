@@ -31,7 +31,7 @@ export default {
     },
     methods: {
         getArtistes() {
-            axios.get('getArtistes')
+            axios.get('artiste')
             .then(
                 data => {
                     this.artistes = data.data
@@ -44,7 +44,7 @@ export default {
             )
         },
         deleteArtiste(id) {
-            axios.delete(`deleteArtiste/${id}`)
+            axios.delete(`artiste/${id}`)
             .then(
                 () => {
                     this.getArtistes();

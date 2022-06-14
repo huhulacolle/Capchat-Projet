@@ -133,7 +133,7 @@ function setUser(nom, mdp) {
     })
 }
 
-app.get('/api/getArtistes', authenticateToken, async function(req, res) {
+app.get('/api/artiste', authenticateToken, async function(req, res) {
     const decoded = getIdUser(req);
     if (!decoded.admin) {
         return res.status(403).end();
@@ -152,7 +152,7 @@ app.get('/api/getArtistes', authenticateToken, async function(req, res) {
 
 })
 
-app.delete('/api/deleteArtiste/:id', authenticateToken, async function(req, res) {
+app.delete('/api/artiste/:id', authenticateToken, async function(req, res) {
     const decoded = getIdUser(req);
     if (!decoded.admin) {
         return res.status(403).end();
@@ -223,7 +223,7 @@ function getCapchat(idJeu) {
     })
 }
 
-app.get('/api/getListJeu', authenticateToken, async function(req, res) {
+app.get('/api/ListJeu', authenticateToken, async function(req, res) {
     const decoded = getIdUser(req);
     await getListJeu(decoded.id)
     .then(
@@ -238,7 +238,7 @@ app.get('/api/getListJeu', authenticateToken, async function(req, res) {
     )
 })
 
-app.get('/api/getJeu', authenticateToken, async function(req, res) {
+app.get('/api/jeu', authenticateToken, async function(req, res) {
     const decoded = getIdUser(req);
     await getJeu(decoded.id, decoded.admin)
     .then(
@@ -253,7 +253,7 @@ app.get('/api/getJeu', authenticateToken, async function(req, res) {
     )
 })
 
-app.post('/api/sendJeu', authenticateToken, async function(req, res) {
+app.post('/api/jeu', authenticateToken, async function(req, res) {
     const decoded = getIdUser(req)
     await setJeu(req.body.nom, decoded.id, req.body.theme)
     .then(
@@ -268,7 +268,7 @@ app.post('/api/sendJeu', authenticateToken, async function(req, res) {
     )
 })
 
-app.put('/api/updateThemeJeu', authenticateToken, async function(req, res) {
+app.put('/api/jeu', authenticateToken, async function(req, res) {
     await updateThemeJeu(req.body.idJeu, req.body.idTheme)
     .then(
         () => {
@@ -282,7 +282,7 @@ app.put('/api/updateThemeJeu', authenticateToken, async function(req, res) {
     )
 })
 
-app.delete('/api/deleteJeu/:id', authenticateToken, async function(req, res) {
+app.delete('/api/jeu/:id', authenticateToken, async function(req, res) {
     await deleteJeu(req.params.id)
     .then(
         () => {
@@ -364,7 +364,7 @@ function deleteJeu(id) {
     })
 }
 
-app.get('/api/getDessin/:idJeu', authenticateToken, async function(req, res) {
+app.get('/api/dessin/:idJeu', authenticateToken, async function(req, res) {
     await getDessin(req.params.idJeu)
     .then(
         data => {
@@ -379,7 +379,7 @@ app.get('/api/getDessin/:idJeu', authenticateToken, async function(req, res) {
     )
 })
 
-app.post('/api/setDessin', authenticateToken, async function(req, res) {
+app.post('/api/dessin', authenticateToken, async function(req, res) {
     if (!req.files) {
         return res.status(400).end();
     }
@@ -397,7 +397,7 @@ app.post('/api/setDessin', authenticateToken, async function(req, res) {
     )
 })
 
-app.delete('/api/deleteDessin/:id', authenticateToken, async function(req, res) {
+app.delete('/api/dessin/:id', authenticateToken, async function(req, res) {
     await deleteDessin(req.params.id)
     .then(
         () => {
@@ -463,7 +463,7 @@ function deleteDessin(id) {
     })
 }
 
-app.get('/api/themes', authenticateToken, async function(req, res) {
+app.get('/api/theme', authenticateToken, async function(req, res) {
     await getThemes()
     .then(
         data => {
@@ -477,7 +477,7 @@ app.get('/api/themes', authenticateToken, async function(req, res) {
     )
 })
 
-app.post('/api/setTheme', authenticateToken, async function(req, res) {
+app.post('/api/theme', authenticateToken, async function(req, res) {
     await setTheme(req.body.nom)
     .then(
         () => {
@@ -491,7 +491,7 @@ app.post('/api/setTheme', authenticateToken, async function(req, res) {
     )
 })
 
-app.put('/api/updateTheme', authenticateToken, async function(req, res) {
+app.put('/api/theme', authenticateToken, async function(req, res) {
     await updateTheme(req.body.id, req.body.nom)
     .then(
         () => {
@@ -505,7 +505,7 @@ app.put('/api/updateTheme', authenticateToken, async function(req, res) {
     )
 })
 
-app.delete('/api/deleteTheme/:id', authenticateToken, async function(req, res) {
+app.delete('/api/theme/:id', authenticateToken, async function(req, res) {
     await deleteTheme(req.params.id)
     .then(
         () => {

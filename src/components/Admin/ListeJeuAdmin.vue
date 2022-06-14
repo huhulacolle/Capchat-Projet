@@ -58,7 +58,7 @@ export default {
     },
     methods: {
         getJeu() {
-            axios.get('getJeu')
+            axios.get('jeu')
             .then(
                 data => {
                     this.tabJeux = data.data
@@ -81,7 +81,7 @@ export default {
             this.dessin = false;
         },
         deleteJeu(id) {
-            axios.delete(`deleteJeu/${id}`)
+            axios.delete(`jeu/${id}`)
             .then(
                 () => {
                     this.getJeu();

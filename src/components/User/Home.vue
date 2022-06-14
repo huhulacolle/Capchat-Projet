@@ -62,7 +62,7 @@ export default {
     },
     methods: {
         getListJeu() {
-            axios.get('getListJeu')
+            axios.get('ListJeu')
                 .then(
                     data => {
                         this.listJeu = data.data
