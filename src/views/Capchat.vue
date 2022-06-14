@@ -37,7 +37,7 @@
             </div>
         </div>
         <div class="text-center" v-if="erreur">
-            <h4>Gros nul</h4>
+            <h4>Erreur</h4>
         </div>
     </div>
 </template>
